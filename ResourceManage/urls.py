@@ -1,0 +1,31 @@
+from django.conf.urls import patterns, include, url
+
+urlpatterns = patterns('ResourceManage.views',
+    url(r'^vlan/list/$','vlan.vlanlist',name='vlanlist' ),
+    url(r'^vlan/input/$','vlan.vlaninput',name='vlaninput' ),
+    url(r'^vlan/edit/(?P<ID>\d+)/$', 'vlan.vlanedit', name='vlanedit'),
+    url(r'^vlan/delete/(?P<ID>\d+)/$', 'vlan.vlandelete', name='vlandelete'),
+
+    url(r'^vlangroup/list/$','vlangroup.vlangrouplist',name='vlangrouplist' ),
+    url(r'^vlangroup/input/$','vlangroup.vlangroupinput',name='vlangroupinput' ),
+    url(r'^vlangroup/edit/(?P<ID>\d+)/$', 'vlangroup.vlangroupedit', name='vlangroupedit'),
+    url(r'^vlangroup/delete/(?P<ID>\d+)/$', 'vlangroup.vlangroupdelete', name='vlangroupdelete'),
+    url(r'^software/list/$','software.softwarelist',name='softwarelist' ),
+    url(r'^software/input/$','software.softwareinput',name='softwareinput' ),
+    url(r'^software/edit/(?P<ID>\d+)/$', 'software.softwareedit', name='softwareedit'),
+    url(r'^software/delete/(?P<ID>\d+)/$', 'software.softwaredelete', name='softwaredelete'),
+    url(r'^software/query/$','software.softwarequery',name='softwarequery' ),
+    url(r'^domain/list/$','domain.domainlist',name='domainlist' ),
+    url(r'^domain/input/$','domain.domaininput',name='domaininput' ),
+    url(r'^domain/edit/(?P<ID>\d+)/$', 'domain.domainedit', name='domainedit'),
+    url(r'^domain/delete/(?P<ID>\d+)/$', 'domain.domaindelete', name='domaindelete'),
+    url(r'^storage/list/$','storage.storagelist',name='storagelist' ),
+    url(r'^storage/input/$','storage.storageinput',name='storageinput' ),
+    url(r'^storage/edit/(?P<ID>\d+)/$', 'storage.storageedit', name='storageedit'),
+    url(r'^storage/delete/(?P<ID>\d+)/$', 'storage.storagedelete', name='storagedelete'),
+
+    url(r'^storagegroup/list/$','storagegroup.storagegrouplist',name='storagegrouplist' ),
+    url(r'^storagegroup/input/$','storagegroup.storagegroupinput',name='storagegroupinput' ),
+    url(r'^storagegroup/edit/(?P<ID>\d+)/$', 'storagegroup.storagegroupedit', name='storagegroupedit'),
+    url(r'^storagegroup/delete/(?P<ID>\d+)/$', 'storagegroup.storagegroupdelete', name='storagegroupdelete'),
+)
