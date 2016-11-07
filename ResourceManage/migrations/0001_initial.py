@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
             name='Domain',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('domainname', models.CharField(max_length=30, verbose_name='\u57df\u540d\u79f0')),
+                ('domainname', models.CharField(unique=True, max_length=30, verbose_name='\u57df\u540d\u79f0', db_index=True)),
                 ('DNS', models.GenericIPAddressField(verbose_name='DNS')),
                 ('remark', models.CharField(max_length=200, null=True, verbose_name='\u5907\u6ce8', blank=True)),
             ],
@@ -45,7 +45,7 @@ class Migration(migrations.Migration):
             name='Storage',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('storagename', models.CharField(max_length=30, verbose_name='\u5b58\u50a8\u540d\u79f0')),
+                ('storagename', models.CharField(unique=True, max_length=30, verbose_name='\u5b58\u50a8\u540d\u79f0', db_index=True)),
                 ('storagesize', models.IntegerField(verbose_name='\u5b58\u50a8\u5927\u5c0f')),
                 ('storagetype', models.CharField(max_length=200, verbose_name='\u5b58\u50a8\u7c7b\u578b')),
                 ('raidtype', models.CharField(max_length=200, verbose_name='\u5b58\u50a8RAID\u7c7b\u578b')),
@@ -60,7 +60,7 @@ class Migration(migrations.Migration):
             name='StorageGroup',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('storagegroupname', models.CharField(max_length=30, verbose_name='\u5b58\u50a8\u7ec4\u540d\u79f0')),
+                ('storagegroupname', models.CharField(unique=True, max_length=30, verbose_name='\u5b58\u50a8\u7ec4\u540d\u79f0', db_index=True)),
                 ('remark', models.CharField(max_length=200, null=True, verbose_name='\u5907\u6ce8', blank=True)),
             ],
             options={
@@ -72,7 +72,7 @@ class Migration(migrations.Migration):
             name='Vlan',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('vlanname', models.CharField(max_length=30, verbose_name='\u7f51\u6bb5\u540d\u79f0')),
+                ('vlanname', models.GenericIPAddressField(unique=True, verbose_name='\u7f51\u6bb5\u540d\u79f0', db_index=True)),
                 ('startip', models.IntegerField(default=16, verbose_name='\u7f51\u6bb5\u8d77\u59cbIP')),
                 ('endip', models.IntegerField(default=254, verbose_name='\u7f51\u6bb5\u7ed3\u675fIP')),
                 ('gateway', models.GenericIPAddressField(verbose_name='\u7f51\u6bb5\u7f51\u5173')),
@@ -88,7 +88,7 @@ class Migration(migrations.Migration):
             name='VlanGroup',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('vlangroupname', models.CharField(max_length=30, verbose_name='\u7f51\u6bb5\u7ec4\u540d\u79f0')),
+                ('vlangroupname', models.CharField(unique=True, max_length=30, verbose_name='\u7f51\u6bb5\u7ec4\u540d\u79f0', db_index=True)),
                 ('remark', models.CharField(max_length=200, null=True, verbose_name='\u5907\u6ce8', blank=True)),
                 ('vlan', models.ManyToManyField(to='ResourceManage.Vlan', verbose_name='\u7f51\u6bb5\u540d\u79f0', blank=True)),
             ],

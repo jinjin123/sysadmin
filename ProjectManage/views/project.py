@@ -83,7 +83,7 @@ def projectedit(request,ID):
 def projectshowvm(request,ID):
     pj= Project.objects.get(id = ID)
     
-    mList = pj.Vm_set.all()
+    mList = pj.vm_set.all()
 
 
     #分页功能

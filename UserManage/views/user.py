@@ -177,7 +177,7 @@ def showvm(request,ID):
         a= i.id
         project_id_list.append(a)
     for j in project_id_list:
-        pj = project.objects.get(id=j)
+        pj = Project.objects.get(id=j)
         vmList = list(pj.vm_set.all())
         mList = mList+vmList
 

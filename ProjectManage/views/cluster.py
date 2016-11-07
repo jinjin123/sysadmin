@@ -81,7 +81,7 @@ def clusteredit(request,ID):
 def clustershowpm(request,ID):
     cl= Cluster.objects.get(id = ID)
     
-    mList = cl.Pm_set.all()
+    mList = cl.pm_set.all()
 
 
     #分页功能
@@ -93,6 +93,24 @@ def clustershowpm(request,ID):
     }
 
     return render_to_response('ProjectManage/pmlist.html',kwvars,RequestContext(request))
+
+@PermissionVerify()
+@login_required
+def clustershowvm(request,ID):
+    cl= Cluster.objects.get(id = ID)
+    
+    mList = cl.vm_set.all()
+
+
+    #分页功能
+    lst = SelfPaginator(request,mList, 20)
+
+    kwvars = {
+        'lPage':lst,
+        'request':request,
+    }
+
+    return render_to_response('ProjectManage/vmlist.html',kwvars,RequestContext(request))
 
 
 @PermissionVerify()
