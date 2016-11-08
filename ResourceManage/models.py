@@ -38,10 +38,10 @@ class StorageGroup(models.Model):
         ordering = ['-id']
 
 class Storage(models.Model):
-    storagename=models.CharField(max_length=30,verbose_name=u'存储名称',unique=True, db_index=True)
+    storagename=models.CharField(max_length=100,verbose_name=u'存储名称',unique=True, db_index=True)
     storagesize=models.IntegerField(verbose_name=u'存储大小')
-    storagetype=models.CharField(max_length=200,verbose_name=u'存储类型')
-    raidtype=models.CharField(max_length=200,verbose_name=u'存储RAID类型')
+    storagetype=models.CharField(max_length=30,verbose_name=u'存储类型')
+    raidtype=models.CharField(max_length=30,verbose_name=u'存储RAID类型')
     storagegroup = models.ForeignKey(StorageGroup,verbose_name=u'存储组名称')
     remark=models.CharField(max_length=200,blank=True,null=True,verbose_name=u'备注')
     def __unicode__(self):

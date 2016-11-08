@@ -41,10 +41,13 @@
             <th>网段组</th>
             <th>存储组</th>
             <th>总存储</th>
+            <th>已用存储</th>
             <th>剩余存储</th>
             <th>总CPU核数</th>
+            <th>已用CPU核数</th>
             <th>剩余CPU</th>
             <th>总内存</th>
+            <th>已用内存</th>
             <th>剩余内存</th>
             <th>操作</th>
         </tr>
@@ -57,10 +60,13 @@
                     <td>{{ i.vlangroup}}</td>
                     <td>{{ i.storagegroup}}</td>
                     <td>{{ i.ttstorage}}</td>
+                    <td>{{ i.usedstorage}}</td>
                     <td>{{ i.systorage}}</td>
                     <td>{{ i.ttcore}}</td>
+                    <td>{{ i.usedcore}}</td>
                     <td>{{ i.sycore}}</td>
                     <td>{{ i.ttmem}}</td>
+                    <td>{{ i.usedmem}}</td>
                     <td>{{ i.symem}}</td>
                     <td class="host_buttom">
                         <a class="btn btn-warning btn-xs"  href={% url "clusteredit" i.id %} onclick="return confirm('是否确认编辑？')">编辑</a>

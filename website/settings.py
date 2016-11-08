@@ -41,6 +41,7 @@ INSTALLED_APPS = (
     'ProjectManage',
     'ResourceManage',
     'AutoInst',
+    #'gunicorn',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -80,14 +81,14 @@ WSGI_APPLICATION = 'website.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        #'ENGINE' : 'django.db.backends.mysql',
-        #'NAME' : 'website',
-        #'USER' : 'peng',
-        #'PASSWORD' : 'pengyc',
-        #'HOST' : '192.168.100.99',
-        #'PORT' : 3306,
+        #'ENGINE': 'django.db.backends.sqlite3',
+        #'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE' : 'django.db.backends.mysql',
+        'NAME' : 'website',
+        'USER' : 'peng',
+        'PASSWORD' : 'pengyc',
+        'HOST' : '22.188.62.20',
+        'PORT' : 3306,
     }
 }
 

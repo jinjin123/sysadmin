@@ -9,7 +9,7 @@ from django.shortcuts import render_to_response,RequestContext
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from ProjectManage.forms import VmForm
-from ProjectManage.models import Vm,Project
+from ProjectManage.models import Vm,Project,Cluster
 from website.common.CommonPaginator import SelfPaginator
 from UserManage.views.permission import PermissionVerify
 
@@ -19,6 +19,20 @@ def vminput(request):
     if request.method == 'POST':
         form = VmForm(request.POST)
         if form.is_valid():
+            vm = form.save(commit=False)
+            ttstorage=Cluster.objects.get(id = vm.cluster_id).ttstorage
+            ttcore=Cluster.objects.get(id = vm.cluster_id).ttcore
+            ttmem=Cluster.objects.get(id = vm.cluster_id).ttmem
+            usedstorage=Cluster.objects.get(id = vm.cluster_id).usedstorage
+            usedcore=Cluster.objects.get(id = vm.cluster_id).usedcore
+            usedmem=Cluster.objects.get(id = vm.cluster_id).usedcore
+            usedstorage=usedstorage+vm.disk
+            usedcore=usedcore+vm.cpu
+            usedmem=usedmem+vm.mem
+            systorage=ttstorage-usedstorage
+            sycore=ttcore-usedcore
+            symem=ttmem-usedmem
+            Cluster.objects.filter(id=vm.cluster_id).update(usedcore=usedcore,usedstorage=usedstorage,usedmem=usedmem,sycore=sycore,symem=symem,systorage=systorage)
             form.save()
             return HttpResponseRedirect(reverse('vmlist'))
 
