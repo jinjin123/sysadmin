@@ -4,46 +4,7 @@
 {% endblock %}
 
 {% block rcontent %}
-<!--
-<script >
-        $(document).ready(function(){
-            $ajaxSetup({
-                data:{csrfmiddlewaretoken:'{{csrf_token}}'},
-            }); 
 
-            $('#mongoForm').submit(function(){
-                var mongolist = $('#id_mongolist').val();
-                var apachelist = $('#id_apachelist').val();
-                var mongoversion = $('#id_mongoversion').val();
-                var sysname = $('#id_sysname').val();
-                var password = $('#id_password').val();
-                
-                $.ajax({
-                    type:"POST",
-		    data:{'mongolist':mongolist,'apachelist':apachelist,'mongoversion':mongoversion,'sysname':sysname,'password':password},   
-                    url: "/install/mongo/",
-                    dateType:"html",
-                    cache:"false"
-                    success:function(ret){$('#result').html(ret);}
-                    /*
-                    success:function(data){
-                        $("#id_mongolist").show();
-                        $("#id_apachelist").show();
-                        $("#id_mongoversion").show();
-                        $("#id_sysname").show();
-                        $("#id_password").show();
-                        $("#result").show();
-                        $("#result").attr("value",data);
-                    } */
-                });
-
-             /* $.get("/install/mongo/",{'mongolist':mongolist,'apachelist':apachelist,'mongoversion':mongoversion,'sysname':sysname,'password':password},function(ret){$('#result').html(ret)}) */
-                  
-            });
-        });
-
-</script>
--->
 
     <div class="btn-toolbar">
         <div class="btn-group">
@@ -60,17 +21,231 @@ pan>物理机录入</a>
   
     <form class="form-horizontal " id="pmForm" role="form" action={% url "pminput" %} method="POST" >
         {% csrf_token %}
-        {% for item in form %}
             <div class="form-group">
-                <label  class="col-md-1 control-label ">{{item.label}}</label>
+                <label  class="col-md-1 control-label ">功能</label>
                 <div class="col-md-4">
-                    {{item}}
+                    {{form.role}}
                 </div>
                 <div class="col-md-offset-1 col-md-11">
-                    {{item.errors}}
+                    {{form.role.errors}}
                 </div>
             </div>
-        {% endfor %}
+            <div class="form-group">
+                <label  class="col-md-1 control-label ">主机名</label>
+                <div class="col-md-4">
+                    {{form.pmname}}
+                </div>
+                <div class="col-md-offset-1 col-md-11">
+                    {{form.pmname.errors}}
+                </div>
+            </div>
+            <div class="form-group">
+                <label  class="col-md-1 control-label ">序列号</label>
+                <div class="col-md-4">
+                    {{form.sn}}
+                </div>
+                <div class="col-md-offset-1 col-md-11">
+                    {{form.sn.errors}}
+                </div>
+            </div>
+            <div id="cluster_div" class="form-group">
+                <label  id="cluster_label" class="col-md-1 control-label ">所属集群</label>
+                <div class="col-md-4">
+                    {{form.cluster}}
+                </div>
+                <div class="col-md-offset-1 col-md-11">
+                    {{form.cluster.errors}}
+                </div>
+            </div>
+            <div id="project_div" class="form-group">
+                <label  id="project_label" class="col-md-1 control-label ">所属项目</label>
+                <div class="col-md-4">
+                    {{form.project}}
+                </div>
+                <div class="col-md-offset-1 col-md-11">
+                    {{form.project.errors}}
+                </div>
+            </div>
+            <div id="vlangroup_div" class="form-group">
+                <label  id="vlangroup_label" class="col-md-1 control-label ">所属网段组</label>
+                <div class="col-md-4">
+                    {{form.vlangroup}}
+                </div>
+                <div class="col-md-offset-1 col-md-11">
+                    {{form.vlangroup.errors}}
+                </div>
+            </div>
+            <div id="storagegroup_div" class="form-group">
+                <label  id="storagegroup_label" class="col-md-1 control-label ">所属存储组</label>
+                <div class="col-md-4">
+                    {{form.storagegroup}}
+                </div>
+                <div class="col-md-offset-1 col-md-11">
+                    {{form.storagegroup.errors}}
+                </div>
+            </div>
+            <div class="form-group">
+                <label  class="col-md-1 control-label ">设备类型</label>
+                <div class="col-md-4">
+                    {{form.type}}
+                </div>
+                <div class="col-md-offset-1 col-md-11">
+                    {{form.type.errors}}
+                </div>
+            </div>
+            <div class="form-group">
+                <label  class="col-md-1 control-label ">CPU</label>
+                <div class="col-md-4">
+                    {{form.cpu}}
+                </div>
+                <div class="col-md-offset-1 col-md-11">
+                    {{form.cpu.errors}}
+                </div>
+            </div>
+            <div class="form-group">
+                <label  class="col-md-1 control-label ">内存</label>
+                <div class="col-md-4">
+                    {{form.memory}}
+                </div>
+                <div class="col-md-offset-1 col-md-11">
+                    {{form.memory.errors}}
+                </div>
+            </div>
+            <div class="form-group">
+                <label  class="col-md-1 control-label ">磁盘</label>
+                <div class="col-md-4">
+                    {{form.disk}}
+                </div>
+                <div class="col-md-offset-1 col-md-11">
+                    {{form.disk.errors}}
+                </div>
+            </div>
+            <div class="form-group">
+                <label  class="col-md-1 control-label ">操作系统</label>
+                <div class="col-md-4">
+                    {{form.os}}
+                </div>
+                <div class="col-md-offset-1 col-md-11">
+                    {{form.os.errors}}
+                </div>
+            </div>
+            <div id="soft_div" class="form-group">
+                <label id="soft_label" class="col-md-1 control-label ">安装软件</label>
+                <div class="col-md-4">
+                    {{form.soft}}
+                </div>
+                <div class="col-md-offset-1 col-md-11">
+                    {{form.soft.errors}}
+                </div>
+            </div>
+            <div class="form-group">
+                <label  class="col-md-1 control-label ">网卡数</label>
+                <div class="col-md-4">
+                    {{form.eth}}
+                </div>
+                <div class="col-md-offset-1 col-md-11">
+                    {{form.eth.errors}}
+                </div>
+            </div>
+            <div class="form-group">
+                <label  class="col-md-1 control-label ">HBA卡</label>
+                <div class="col-md-4">
+                    {{form.hba}}
+                </div>
+                <div class="col-md-offset-1 col-md-11">
+                    {{form.hba.errors}}
+                </div>
+            </div>
+            <div class="form-group">
+                <label  class="col-md-1 control-label ">HBAWWN</label>
+                <div class="col-md-4">
+                    {{form.hba_wwn}}
+                </div>
+                <div class="col-md-offset-1 col-md-11">
+                    {{form.hba_wwn.errors}}
+                </div>
+            </div>
+            <div class="form-group">
+                <label  class="col-md-1 control-label ">IP地址</label>
+                <div class="col-md-4">
+                    {{form.ip}}
+                </div>
+                <div class="col-md-offset-1 col-md-11">
+                    {{form.ip.errors}}
+                </div>
+            </div>
+            <div class="form-group">
+                <label  class="col-md-1 control-label ">管理地址</label>
+                <div class="col-md-4">
+                    {{form.ilo_ip}}
+                </div>
+                <div class="col-md-offset-1 col-md-11">
+                    {{form.ilo_ip.errors}}
+                </div>
+            </div>
+            <div class="form-group">
+                <label  class="col-md-1 control-label ">子网掩码</label>
+                <div class="col-md-4">
+                    {{form.mask}}
+                </div>
+                <div class="col-md-offset-1 col-md-11">
+                    {{form.mask.errors}}
+                </div>
+            </div>
+            <div class="form-group">
+                <label  class="col-md-1 control-label ">网关</label>
+                <div class="col-md-4">
+                    {{form.gateway}}
+                </div>
+                <div class="col-md-offset-1 col-md-11">
+                    {{form.gateway.errors}}
+                </div>
+            </div>
+            <div id="domain_div" class="form-group">
+                <label id="domain_label" class="col-md-1 control-label ">所属域</label>
+                <div class="col-md-4">
+                    {{form.domain}}
+                </div>
+                <div class="col-md-offset-1 col-md-11">
+                    {{form.domain.errors}}
+                </div>
+            </div>
+            <div class="form-group">
+                <label  class="col-md-1 control-label ">机柜位</label>
+                <div class="col-md-4">
+                    {{form.jiguiwei}}
+                </div>
+                <div class="col-md-offset-1 col-md-11">
+                    {{form.jiguiwei.errors}}
+                </div>
+            </div>
+            <div class="form-group">
+                <label  class="col-md-1 control-label ">机柜号</label>
+                <div class="col-md-4">
+                    {{form.jiguihao}}
+                </div>
+                <div class="col-md-offset-1 col-md-11">
+                    {{form.jiguihao.errors}}
+                </div>
+            </div>
+            <div class="form-group">
+                <label  class="col-md-1 control-label ">机房</label>
+                <div class="col-md-4">
+                    {{form.position}}
+                </div>
+                <div class="col-md-offset-1 col-md-11">
+                    {{form.position.errors}}
+                </div>
+            </div>
+            <div class="form-group">
+                <label  class="col-md-1 control-label ">备注</label>
+                <div class="col-md-4">
+                    {{form.remark}}
+                </div>
+                <div class="col-md-offset-1 col-md-11">
+                    {{form.remark.errors}}
+                </div>
+            </div>
 
         <div class="form-group">
             <div class="col-md-4 col-md-offset-1">
@@ -78,18 +253,57 @@ pan>物理机录入</a>
             </div>
         </div>
     </form>
+<!--
 <script type="text/javascript">
-        $('.form_datetime').datetimepicker({
-                                               language: 'zh-CN',
-                                               weekStart: 1,
-                                               todayBtn: 1,
-                                               autoclose: 1,
-                                               todayHighlight: 1,
-                                               startView: 2,
-                                               forceParse: 0,
-                                               showMeridian: 1
-                                           });
+    /*$(document).ready(function(){
+            $ajaxSetup({
+                data:{csrfmiddlewaretoken:'{{csrf_token}}'},
+            });*/ 
+        function listchange(){
+            alert("hello,world")
+            //var sel=documemt.getElementsByName('role')[0].value;
+            var sel=documemt.getElementsByName('role');
+            for(var i=0,i<sel.options.length;i++){
+                if (sel.options[i].selected){
+                    if (sel.options[i].value=='物理集群宿主机'){
+                       //if(sel=='物理集群宿主机')
+                       document.getElementById("id_project").style.display="none";
+                       document.getElementById("id_project").value="";
+                       document.getElementById("id_vlangroup").style.display="none";
+                       document.getElementById("id_vlangroup").value="";
+                       document.getElementById("id_storagegroup").style.display="none";
+                       document.getElementById("id_storagegroup").value="";
+                       document.getElementById("id_soft").style.display="none";
+                       document.getElementById("id_soft").value="";
+                       document.getElementById("id_domain").style.display="none";
+                       document.getElementById("id_domain").value="";
+                    }
+                    if (sel.options[i].value=='物理单机宿主机'){
+                      // if(sel=='物理单机宿主机')
+                       document.getElementById("id_project").style.display="none";
+                       document.getElementById("id_project").value="";
+                       document.getElementById("id_cluster").style.display="none";
+                       document.getElementById("id_cluster").value="";
+                       document.getElementById("id_soft").style.display="none";
+                       document.getElementById("id_soft").value="";
+                       document.getElementById("id_domain").style.display="none";
+                       document.getElementById("id_domain").value="";
+                    }
+                    if (sel.options[i].value=='物理单机'){
+                       //if(sel=='物理单机')
+                       document.getElementById("id_cluster").style.display="none";
+                       document.getElementById("id_cluster").value="";
+                    }
+ 
+                }
+            }
+
+        }
+    //})
+
 </script>
+-->
+<script src="/static/js/pm.js"></script>
 {% endblock %}
 
 

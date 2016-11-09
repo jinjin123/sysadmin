@@ -19,6 +19,9 @@ class Vlan(models.Model):
 class VlanGroup(models.Model):
     vlangroupname = models.CharField(max_length=30,verbose_name=u'网段组名称',unique=True, db_index=True)
     vlan = models.ManyToManyField(Vlan,blank=True,verbose_name=u'网段名称')
+    ttip = models.IntegerField(verbose_name=u'网段组IP个数',default=0,blank=True)
+    syip = models.IntegerField(verbose_name=u'网段组剩余IP个数',default=0,blank=True)
+    usedip = models.IntegerField(verbose_name=u'网段组已用IP个数',default=0,blank=True)
     remark = models.CharField(max_length=200,blank=True,null=True,verbose_name=u'备注')
 
     def __unicode__(self):
@@ -29,6 +32,9 @@ class VlanGroup(models.Model):
 
 class StorageGroup(models.Model):
     storagegroupname = models.CharField(max_length=30,verbose_name=u'存储组名称',unique=True, db_index=True)
+    ttstorage = models.IntegerField(verbose_name=u'存储组大小',default=0,blank=True)
+    systorage = models.IntegerField(verbose_name=u'存储组剩余大小',default=0,blank=True)
+    usedstorage = models.IntegerField(verbose_name=u'存储组已用大小',default=0,blank=True)
     remark=models.CharField(max_length=200,blank=True,null=True,verbose_name=u'备注')
 
     def __unicode__(self):

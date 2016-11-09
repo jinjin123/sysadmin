@@ -5,7 +5,7 @@ from django import forms
 from ProjectManage.models import Project,Vm,Cluster,Pm
 from ResourceManage.models import Software,Domain
 #环境选项
-ENV_CHOICES = (
+ENV_CHOICES = (('','---------'),
                ('T1', 'T1'),
                ('T2', 'T2'),
                ('T3', 'T3'),
@@ -14,7 +14,8 @@ ENV_CHOICES = (
                ('X1', 'X1')
 )
 #平台选项
-PLATFORM_CHOICES = (('VSPHERE', 'VSPHERE'),
+PLATFORM_CHOICES = (('','---------'),
+               ('VSPHERE', 'VSPHERE'),
                ('Hyper-V', 'Hyper-V'),
                ('Window', 'Window'),
                ('Linux', 'Linux'),
@@ -23,7 +24,8 @@ PLATFORM_CHOICES = (('VSPHERE', 'VSPHERE'),
                ('Other', 'Other')
 )
 #Vcenter选项
-VC_IP_CHOICES = (('22.188.18.231', '22.188.18.231'),
+VC_IP_CHOICES =(('','---------'),
+               ('22.188.18.231', '22.188.18.231'),
                ('61.0.128.194', '61.0.128.194'),
                ('61.0.128.200', '61.0.128.200'),
                ('61.0.128.8', '61.0.128.8')
@@ -31,20 +33,23 @@ VC_IP_CHOICES = (('22.188.18.231', '22.188.18.231'),
 
 
 #架构选项
-ARCH_CHOICES = (('X86','X86'),
+ARCH_CHOICES = (('','---------'),
+                ('X86','X86'),
                 ('X86_64','X86_64'),
                 ('NOARCH','NOARCH')
 )
 
 #软件类型选项
-TYPE_CHOICES = (('中间件','中间件'),
+TYPE_CHOICES = (('','---------'),
+                ('中间件','中间件'),
                 ('操作系统','操作系统'),
                 ('数据库','数据库'),
                 ('其他','其他')
 )
 #批次选项
-BATCH_CHOICES = (('X601','X601'),
-                ('P604','P604'),
+BATCH_CHOICES = (('','---------'),
+                 ('X601','X601'),
+                 ('P604','P604'),
                 ('P605','P605'),
                 ('P606','P606'),
                 ('P701','P701'),
@@ -52,7 +57,8 @@ BATCH_CHOICES = (('X601','X601'),
 )
 
 #操作系统选项
-OS_CHOICES = (('WINDOW SERVER 2003', 'WINDOW SERVER 2003'),
+OS_CHOICES = (('','---------'),
+              ('WINDOW SERVER 2003', 'WINDOW SERVER 2003'),
               ('WINDOW SERVER 2008', 'WINDOW SERVER 2008'),
               ('WINDOW SERVER 2008R2', 'WINDOW SERVER 2008R2'),
               ('WINDOW SERVER 2012', 'WINDOW SERVER 2012'),
@@ -69,18 +75,21 @@ OS_CHOICES = (('WINDOW SERVER 2003', 'WINDOW SERVER 2003'),
 
 
 #机房位置选项
-POSITION_CHOICES=(('2C','2C'),
+POSITION_CHOICES=(('','---------'),
+                 ('2C','2C'),
                  ('2B','2B')
 )
 
 #物理机角色选项
-ROLE_CHOICES=(('物理单机','物理单机'),
+ROLE_CHOICES=(   ('','---------'),
+                 ('物理单机','物理单机'),
                  ('物理集群宿主机','物理集群宿主机'),
                  ('物理单机宿主机','物理单机宿主机')
 )
 
 #虚拟机角色选项
-VMROLE_CHOICES=(('WEB服务器','WEB服务器'),
+VMROLE_CHOICES=( ('','---------'),
+                 ('WEB服务器','WEB服务器'),
                  ('数据库服务器','数据库服务器'),
                  ('应用服务器','应用服务器'),
                  ('前置机','前置机'),
@@ -88,7 +97,8 @@ VMROLE_CHOICES=(('WEB服务器','WEB服务器'),
 )
 
 #掩码选项
-MASK_CHOICES=(('255.255.255.0','255.255.255.0'),
+MASK_CHOICES=(('','---------'),
+             ('255.255.255.0','255.255.255.0'),
              ('255.255.255.128','255.255.255.128'),
              ('255.255.0.0','255.255.0.0')
 )
@@ -229,25 +239,28 @@ class ClusterForm(forms.ModelForm):
         self.fields['clustername'].error_messages={'required':u'请输入集群名'}
         self.fields['clustername'].widget.attrs={'class':'form-control'}
         self.fields['platform'].label=u'平台'
-        self.fields['platform'].error_messages={'required':u'请选中平台'}
+        self.fields['platform'].error_messages={'required':u'请选择平台'}
         self.fields['platform'].widget.attrs={'class':'form-control'}
         self.fields['platform'].widget.choices=PLATFORM_CHOICES
         self.fields['vcaddress'].label=u'vc地址'	
-        self.fields['vcaddress'].error_messages={'required':u'请选中vc地址',}
+        self.fields['vcaddress'].error_messages={'required':u'请选择vc地址'}
         self.fields['vcaddress'].widget.attrs={'class':'form-control'}
         self.fields['vcaddress'].widget.choices=VC_IP_CHOICES
         self.fields['vlangroup'].label=u'集群所属网络组'
         self.fields['vlangroup'].widget.attrs={'class':'form-control'}
+        self.fields['vlangroup'].error_messages={'required':u'请选择集群网段组'}
         self.fields['storagegroup'].label=u'集群所属存储组'
         self.fields['storagegroup'].widget.attrs={'class':'form-control'}
+        self.fields['storagegroup'].error_messages={'required':u'请选择集群存储组'}
         self.fields['remark'].label=u'备注'
         self.fields['remark'].widget.attrs={'class':'form-control'}
 
 class PmForm(forms.ModelForm):
     class Meta:
         model = Pm
-        fields = ('pmname','sn','cluster','project','vlangroup','storagegroup','role','type','cpu','memory','disk','os','soft','eth','hba','hba_wwn','ip','ilo_ip','mask','gateway','domain','jiguihao','jiguiwei','position','remark')
+        fields = ('role','pmname','sn','cluster','project','vlangroup','storagegroup','type','cpu','memory','disk','os','soft','eth','hba','hba_wwn','ip','ilo_ip','mask','gateway','domain','jiguihao','jiguiwei','position','remark')
         widgets = {
+            'role' : forms.Select(),
             'pmname' : forms.TextInput(),
             'ip' : forms.TextInput(),
             'ilo_ip' : forms.TextInput(),
@@ -256,7 +269,6 @@ class PmForm(forms.ModelForm):
             'project' : forms.Select(),
             'vlangroup' : forms.Select(),
             'storagegroup' : forms.Select(),
-            'role' : forms.Select(),
             'type' : forms.TextInput(),
             'cpu' : forms.TextInput(),
             'memory' : forms.TextInput(),
@@ -313,31 +325,31 @@ class PmForm(forms.ModelForm):
         self.fields['hba'].error_messages={'invalid':u'请输入数字'}
         self.fields['disk'].error_messages={'invalid':u'请输入数字'}
         
-        self.fields['pmname'].widget.attrs={'class':'form-control'}
-        self.fields['sn'].widget.attrs={'class':'form-control'}
-        self.fields['cluster'].widget.attrs={'class':'form-control'}
-        self.fields['project'].widget.attrs={'class':'form-control'}
-        self.fields['vlangroup'].widget.attrs={'class':'form-control'}
-        self.fields['storagegroup'].widget.attrs={'class':'form-control'}
-        self.fields['cpu'].widget.attrs={'class':'form-control'}
-        self.fields['memory'].widget.attrs={'class':'form-control'}
-        self.fields['os'].widget.attrs={'class':'form-control'}
-        self.fields['soft'].widget.attrs={'class':'form-control'}
-        self.fields['ip'].widget.attrs={'class':'form-control'}
-        self.fields['ilo_ip'].widget.attrs={'class':'form-control'}
-        self.fields['eth'].widget.attrs={'class':'form-control'}
-        self.fields['hba'].widget.attrs={'class':'form-control'}
-        self.fields['jiguihao'].widget.attrs={'class':'form-control'}
-        self.fields['jiguiwei'].widget.attrs={'class':'form-control'}
-        self.fields['type'].widget.attrs={'class':'form-control'}
-        self.fields['role'].widget.attrs={'class':'form-control'}
-        self.fields['disk'].widget.attrs={'class':'form-control'}
-        self.fields['hba_wwn'].widget.attrs={'class':'form-control'}
-        self.fields['domain'].widget.attrs={'class':'form-control'}
-        self.fields['mask'].widget.attrs={'class':'form-control'}
-        self.fields['gateway'].widget.attrs={'class':'form-control'}
-        self.fields['position'].widget.attrs={'class':'form-control'}
-        self.fields['remark'].widget.attrs={'class':'form-control','cols':120,'rows':2}
+        self.fields['pmname'].widget.attrs={'class':'form-control','style':'display:inline-table'}
+        self.fields['sn'].widget.attrs={'class':'form-control','style':'display:inline-table'}
+        self.fields['cluster'].widget.attrs={'class':'form-control','style':'display:inline-table'}
+        self.fields['project'].widget.attrs={'class':'form-control','style':'display:inline-table'}
+        self.fields['vlangroup'].widget.attrs={'class':'form-control','style':'display:inline-table'}
+        self.fields['storagegroup'].widget.attrs={'class':'form-control','style':'display:inline-table'}
+        self.fields['cpu'].widget.attrs={'class':'form-control','style':'display:inline-table'}
+        self.fields['memory'].widget.attrs={'class':'form-control','style':'display:inline-table'}
+        self.fields['os'].widget.attrs={'class':'form-control','style':'display:inline-table'}
+        self.fields['soft'].widget.attrs={'class':'form-control','style':'display:inline-table'}
+        self.fields['ip'].widget.attrs={'class':'form-control','style':'display:inline-table'}
+        self.fields['ilo_ip'].widget.attrs={'class':'form-control','style':'display:inline-table'}
+        self.fields['eth'].widget.attrs={'class':'form-control','style':'display:inline-table'}
+        self.fields['hba'].widget.attrs={'class':'form-control','style':'display:inline-table'}
+        self.fields['jiguihao'].widget.attrs={'class':'form-control','style':'display:inline-table'}
+        self.fields['jiguiwei'].widget.attrs={'class':'form-control','style':'display:inline-table'}
+        self.fields['type'].widget.attrs={'class':'form-control','style':'display:inline-table'}
+        self.fields['role'].widget.attrs={'class':'form-control','onchange':'javascript:listchange();return false;','style':'display:inline-table'}
+        self.fields['disk'].widget.attrs={'class':'form-control','style':'display:inline-table'}
+        self.fields['hba_wwn'].widget.attrs={'class':'form-control','style':'display:inline-table'}
+        self.fields['domain'].widget.attrs={'class':'form-control','style':'display:inline-table'}
+        self.fields['mask'].widget.attrs={'class':'form-control','style':'display:inline-table'}
+        self.fields['gateway'].widget.attrs={'class':'form-control','style':'display:inline-table'}
+        self.fields['position'].widget.attrs={'class':'form-control','style':'display:inline-table'}
+        self.fields['remark'].widget.attrs={'class':'form-control','cols':120,'rows':2,'style':'display:inline-table'}
 
         self.fields['os'].widget.choices=OS_CHOICES
         self.fields['mask'].widget.choices=MASK_CHOICES

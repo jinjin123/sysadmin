@@ -20,6 +20,7 @@ def storageinput(request):
     if request.method == 'POST':
         form = StorageForm(request.POST)
         if form.is_valid():
+            '''
             storage = form.save(commit=False)
             ttstorage=0
             
@@ -31,6 +32,7 @@ def storageinput(request):
             ttstorage=ttstorage+storage.storagesize
             systorage=ttstorage-usedstorage
             Cluster.objects.filter(storagegroup_id=storage.storagegroup_id).update(ttstorage=ttstorage,systorage=systorage) 
+            '''
             form.save()
             return HttpResponseRedirect(reverse('storagelist'))
 
@@ -61,6 +63,7 @@ def storagelist(request):
 @PermissionVerify()
 @login_required
 def storagedelete(request,ID):
+    '''
     storagegroup_id=Storage.objects.get(id=ID).storagegroup_id
     ttstorage=Cluster.objects.get(storagegroup_id=storagegroup_id).ttstorage
     systorage=Cluster.objects.get(storagegroup_id=storagegroup_id).systorage
@@ -68,6 +71,7 @@ def storagedelete(request,ID):
     ttstorage=ttstorage-storagesize 
     systorage=systorage-storagesize 
     Cluster.objects.filter(storagegroup_id=storagegroup_id).update(ttstorage=ttstorage,systorage=systorage)
+    '''
     Storage.objects.filter(id = ID).delete()
  
     return HttpResponseRedirect(reverse('storagelist'))
@@ -77,6 +81,7 @@ def storagedelete(request,ID):
 @login_required
 def storageedit(request,ID):
     bcstorage= Storage.objects.get(id = ID)
+    '''
     bcstoragesize=bcstorage.storagesize
     bcstoragegroup_id=bcstorage.storagegroup_id
 
@@ -88,10 +93,11 @@ def storageedit(request,ID):
         bcttstorage1=bcttstorage1+storagesize
 
     bcsystorage1=bcttstorage1-bcusedstorage1
-
+    '''
     if request.method=='POST':
         form = StorageForm(request.POST,instance=bcstorage)
         if form.is_valid():
+            '''
             acstorage = form.save(commit=False)
             acstoragesize=acstorage.storagesize
             acstoragegroup_id=acstorage.storagegroup_id
@@ -108,7 +114,7 @@ def storageedit(request,ID):
                 acttstorage1=bcttstorage1-bcstoragesize
                 acsystorage1=bcsystorage1-bcstoragesize
                 Cluster.objects.filter(storagegroup_id=bcstoragegroup_id).update(ttstorage=acttstorage1,systorage=acsystorage1)
-
+            '''
                  
             form.save()
             return HttpResponseRedirect(reverse('storagelist'))

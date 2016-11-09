@@ -4,7 +4,8 @@
 from django import forms
 from ResourceManage.models import Vlan,VlanGroup,Software,Domain,Storage,StorageGroup
 #平台选项
-PLATFORM_CHOICES = (('VSPHERE', 'VSPHERE'),
+PLATFORM_CHOICES = (('','---------'),
+               ('VSPHERE', 'VSPHERE'),
                ('Hyper-V', 'Hyper-V'),
                ('Window', 'Window'),
                ('Linux', 'Linux'),
@@ -13,7 +14,8 @@ PLATFORM_CHOICES = (('VSPHERE', 'VSPHERE'),
                ('Other', 'Other')
 )
 #Vcenter选项
-VC_IP_CHOICES = (('22.188.18.231', '22.188.18.231'),
+VC_IP_CHOICES = (('','---------'),
+               ('22.188.18.231', '22.188.18.231'),
                ('61.0.128.194', '61.0.128.194'),
                ('61.0.128.200', '61.0.128.200'),
                ('61.0.128.8', '61.0.128.8')
@@ -21,13 +23,15 @@ VC_IP_CHOICES = (('22.188.18.231', '22.188.18.231'),
 
 
 #架构选项
-ARCH_CHOICES = (('X86','X86'),
+ARCH_CHOICES = (('','---------'),
+                ('X86','X86'),
                 ('X86_64','X86_64'),
                 ('NOARCH','NOARCH')
 )
 
 #RAID选项
-RAIDTYPE_CHOICES = (('RAID0','RAID0'),
+RAIDTYPE_CHOICES =(('','---------'),
+                ('RAID0','RAID0'),
                 ('RAID1','RAID1'),
                 ('RAID1+0','RAID1+0'),
                 ('RAID5','RAID5'),
@@ -35,21 +39,24 @@ RAIDTYPE_CHOICES = (('RAID0','RAID0'),
 )
 
 #软件类型选项
-TYPE_CHOICES = (('中间件','中间件'),
+TYPE_CHOICES = (('','---------'),
+                ('中间件','中间件'),
                 ('操作系统','操作系统'),
                 ('数据库','数据库'),
                 ('其他','其他')
 )
 
 #存储类型选项
-STORAGETYPE_CHOICES = (('HUAWEI','HUAWEI'),
+STORAGETYPE_CHOICES = (('','---------'),
+                ('HUAWEI','HUAWEI'),
                 ('EMC','EMC'),
                 ('HDS','HDS'),
                 ('其他','其他')
 )
 
 #掩码选项
-MASK_CHOICES=(('255.255.255.0','255.255.255.0'),
+MASK_CHOICES=(('','---------'),
+             ('255.255.255.0','255.255.255.0'),
              ('255.255.255.128','255.255.255.128'),
              ('255.255.0.0','255.255.0.0')
 )

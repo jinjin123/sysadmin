@@ -20,6 +20,7 @@ def pminput(request):
     if request.method == 'POST':
         form = PmForm(request.POST)
         if form.is_valid():
+            '''
             pm = form.save(commit=False)
             if pm.cluster_id != None:
                 ttcore=0
@@ -36,8 +37,8 @@ def pminput(request):
                 ttmem=ttmem+pm.memory
                 sycore=ttcore-usedcore
                 symem=ttmem-usedmem
-                Cluster.objects.filter(id=pm.cluster_id).update(ttcore=ttcore,ttmem=ttmem,symem=symem,sycore=sycore)
-
+               Cluster.objects.filter(id=pm.cluster_id).update(ttcore=ttcore,ttmem=ttmem,symem=symem,sycore=sycore)
+            ''' 
             form.save()
             return HttpResponseRedirect(reverse('pmlist'))
 
@@ -69,6 +70,7 @@ def pmlist(request):
 @PermissionVerify()
 @login_required
 def pmdelete(request,ID):
+    '''
     bcpm= Pm.objects.get(id = ID)
     bcpmcluster_id=bcpm.cluster_id
     bccpu=bcpm.cpu
@@ -88,6 +90,7 @@ def pmdelete(request,ID):
     bcsycore1=bcttcore1-bcusedcore1
     bcsymem1=bcttmem1-bcusedmem1
     Cluster.objects.filter(id=bcpmcluster_id).update(ttcore=bcttcore1,sycore=bcsycore1,ttmem=bcttmem1,symem=bcsymem1)
+    '''
     Pm.objects.filter(id = ID).delete()
  
 
@@ -98,12 +101,15 @@ def pmdelete(request,ID):
 @login_required
 def pmedit(request,ID):
     bcpm= Pm.objects.get(id = ID)
+    '''
     bcpmcluster_id=bcpm.cluster_id
     bccpu=bcpm.cpu
     bcmem=bcpm.memory
+    '''
     if request.method=='POST':
         form = PmForm(request.POST,instance=bcpm)
         if form.is_valid():
+            '''
             acpm = form.save(commit=False)
             acpmcluster_id=acpm.cluster_id
             print "clusterid"
@@ -180,6 +186,7 @@ def pmedit(request,ID):
                 Cluster.objects.filter(id=acpmcluster_id).update(ttcore=acttcore2,sycore=acsycore2,ttmem=acttmem2,symem=acsymem2)
             else :
                 pass                
+            '''
             form.save()
             return HttpResponseRedirect(reverse('pmlist'))
     else:
@@ -196,13 +203,33 @@ def pmedit(request,ID):
 
 @PermissionVerify()
 @login_required
+def pmrepl(request,ID):
+    bcpm= Pm.objects.get(id = ID)
+    if request.method=='POST':
+        form = PmForm(request.POST,instance=bcpm)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('pmlist'))
+    else:
+        form = PmForm(instance=bcpm)
+
+    kwvars = {
+        'ID':ID,
+        'form':form,
+        'request':request,
+    }
+
+    return render_to_response('ProjectManage/pmForm.html',kwvars,RequestContext(request))
+
+@PermissionVerify()
+@login_required
 def pmquery(request):
     kwargs ={}
     pmname= request.GET.get('pmname')
     ip = request.GET.get('ip')
     ilo_ip = request.GET.get('ilo_ip')
     cluster = request.GET.get('cluster')
-    project = request.GET.get('project')
+    os = request.GET.get('os')
     if pmname != '':
         kwargs['pmname'] = pmname 
     if ip != '':
@@ -217,14 +244,9 @@ def pmquery(request):
         if tmpobject != {}:
             cluster_id=tmpobject.id
             kwargs['cluster_id'] = cluster_id
-    if project !='':
-        try:
-            tmpobject1=Project.objects.get(projectname=project)
-        except Project.DoesNotExist:
-            tmpobject1={}
-        if tmpobject1 !={}:
-            project_id=tmpobject1.id
-            kwargs['project_id'] = project_id
+    if os !='':
+        kwargs['os'] = os
+
     mList = Pm.objects.filter(**kwargs)
     print kwargs
 
