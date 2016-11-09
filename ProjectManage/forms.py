@@ -149,14 +149,14 @@ class ProjectForm(forms.ModelForm):
 class VmForm(forms.ModelForm):
     class Meta:
         model = Vm
-        fields = ('vmname','project','pm','role','batch','env','cluster','os','soft','cpu','mem','disk','ip','mask','gateway','domain','admin','appuser')
+        fields = ('vmname','project','pm','role','cluster','os','soft','cpu','mem','disk','ip','mask','gateway','domain','admin','appuser')
         widgets = {
             'vmname' : forms.TextInput(),
             'project' : forms.Select(),
             'pm' : forms.Select(),
             'role' : forms.Select(),
-            'batch' : forms.Select(),
-            'env' : forms.Select(),
+            #'batch' : forms.Select(),
+            #'env' : forms.Select(),
             'cluster' : forms.Select(),
             'os' : forms.Select(),
             'soft' : forms.Select(),
@@ -179,18 +179,18 @@ class VmForm(forms.ModelForm):
         self.fields['project'].label=u'所属项目'
         self.fields['project'].widget.attrs={'class':'form-control'}
         self.fields['pm'].label=u'所属物理机'
-        self.fields['pm'].widget.attrs={'class':'form-control'}
+        self.fields['pm'].widget.attrs={'class':'form-control','onchange':'javascript:vm();return false;'}
         self.fields['role'].label=u'服务器功能'
         self.fields['role'].widget.attrs={'class':'form-control'}
         self.fields['role'].widget.choices=VMROLE_CHOICES
-        self.fields['batch'].label=u'批次'
-        self.fields['batch'].widget.attrs={'class':'form-control'}
-        self.fields['batch'].widget.choices=BATCH_CHOICES
-        self.fields['env'].label=u'环境'
-        self.fields['env'].widget.attrs={'class':'form-control'}
-        self.fields['env'].widget.choices=ENV_CHOICES
+        #self.fields['batch'].label=u'批次'
+        #self.fields['batch'].widget.attrs={'class':'form-control'}
+        #self.fields['batch'].widget.choices=BATCH_CHOICES
+        #self.fields['env'].label=u'环境'
+        #self.fields['env'].widget.attrs={'class':'form-control'}
+        #self.fields['env'].widget.choices=ENV_CHOICES
         self.fields['cluster'].label=u'集群'
-        self.fields['cluster'].widget.attrs={'class':'form-control'}
+        self.fields['cluster'].widget.attrs={'class':'form-control','onchange':'javascript:vm();return false;'}
         self.fields['os'].label=u'操作系统'
         self.fields['os'].error_messages={'required':u'请选择操作系统'}
         self.fields['os'].widget.attrs={'class':'form-control'}
@@ -248,10 +248,10 @@ class ClusterForm(forms.ModelForm):
         self.fields['vcaddress'].widget.choices=VC_IP_CHOICES
         self.fields['vlangroup'].label=u'集群所属网络组'
         self.fields['vlangroup'].widget.attrs={'class':'form-control'}
-        self.fields['vlangroup'].error_messages={'required':u'请选择集群网段组'}
+        self.fields['vlangroup'].error_messages={'required':u'请选择集群网段组','invalid':u'此网络组已被选择'}
         self.fields['storagegroup'].label=u'集群所属存储组'
         self.fields['storagegroup'].widget.attrs={'class':'form-control'}
-        self.fields['storagegroup'].error_messages={'required':u'请选择集群存储组'}
+        self.fields['storagegroup'].error_messages={'required':u'请选择集群存储组','invalid':u'此存储组已被选择'}
         self.fields['remark'].label=u'备注'
         self.fields['remark'].widget.attrs={'class':'form-control'}
 

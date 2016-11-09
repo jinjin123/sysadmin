@@ -9,7 +9,7 @@ from django.shortcuts import render_to_response,RequestContext
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from ProjectManage.forms import VmForm
-from ProjectManage.models import Vm,Project,Cluster
+from ProjectManage.models import Vm,Project,Cluster,Pm
 from website.common.CommonPaginator import SelfPaginator
 from UserManage.views.permission import PermissionVerify
 
@@ -35,11 +35,15 @@ def vminput(request):
             symem=ttmem-usedmem
             Cluster.objects.filter(id=vm.cluster_id).update(usedcore=usedcore,usedstorage=usedstorage,usedmem=usedmem,sycore=sycore,symem=symem,systorage=systorage)
             '''
+            vm = form.save(commit=False)
+            vm.batch=Project.objects.get(id=vm.project_id).batch
+            vm.env=Project.objects.get(id=vm.project_id).env
             form.save()
             return HttpResponseRedirect(reverse('vmlist'))
 
     else:
         form = VmForm()
+        form.fields['pm'].queryset=Pm.objects.filter(role="物理单机宿主机")
     kwvars = {
         'form':form,  
         'request':request,
@@ -78,6 +82,9 @@ def vmedit(request,ID):
     if request.method=='POST':
         form = VmForm(request.POST,instance=pj)
         if form.is_valid():
+            vm = form.save(commit=False)
+            vm.batch=Project.objects.get(id=vm.project_id).batch
+            vm.env=Project.objects.get(id=vm.project_id).env
             form.save()
             return HttpResponseRedirect(reverse('vmlist'))
     else:
@@ -100,6 +107,9 @@ def vmrepl(request,ID):
     if request.method=='POST':
         form = VmForm(request.POST,instance=pj)
         if form.is_valid():
+            vm = form.save(commit=False)
+            vm.batch=Project.objects.get(id=vm.project_id).batch
+            vm.env=Project.objects.get(id=vm.project_id).env
             form.save()
             return HttpResponseRedirect(reverse('vmlist'))
     else:

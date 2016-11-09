@@ -219,7 +219,7 @@ def pmrepl(request,ID):
         'request':request,
     }
 
-    return render_to_response('ProjectManage/pmForm.html',kwvars,RequestContext(request))
+    return render_to_response('ProjectManage/pmrepl.html',kwvars,RequestContext(request))
 
 @PermissionVerify()
 @login_required

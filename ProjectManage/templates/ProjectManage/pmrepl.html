@@ -253,7 +253,17 @@ pan>物理机录入</a>
             </div>
         </div>
     </form>
-<script src="/static/js/pm.js"></script>
+<script>
+window.onload=function(){
+    document.getElementById("id_project").disabled=true;
+    document.getElementById("id_vlangroup").disabled=true;
+    document.getElementById("id_storagegroup").disabled=true;
+    document.getElementById("id_cluster").disabled=true;
+    document.getElementById("id_soft").disabled=true;
+    document.getElementById("id_domain").disabled=true;
+}
+</script>
+<script src="/static/js/pmedit.js"></script>
 {% endblock %}
 
 
