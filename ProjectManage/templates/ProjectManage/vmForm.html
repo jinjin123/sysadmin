@@ -58,7 +58,7 @@ pan>虚拟机录入</a>
 
     <hr/>
   
-    <form class="form-horizontal " id="vmForm" role="form" action={% url "vminput" %} method="POST" >
+    <form class="form-horizontal table table-hover table-striped  table-bordered table-condensed" id="vmForm" role="form" action={% url "vminput" %} method="POST" >
         {% csrf_token %}
             <div class="form-group">
                 <label  class="col-md-1 control-label ">虚拟机名称</label>
@@ -146,6 +146,20 @@ pan>虚拟机录入</a>
                 <div class="col-md-4">
                     {{form.disk}}
                 </div>
+                <div class="col-md-offset-1 col-md-11">
+                    {{form.disk.errors}}
+                </div>
+            </div>
+            <div class="form-group">
+                <tr>
+                    <th><label  for="id_ipcount" class="col-md-1 control-label ">IP个数</label><th>
+                      <div class="col-md-4" style="margin:0">
+                        <td><input class="form-control" id="id_ipcount" name="ipcount" type="text" /></td>
+                      </div>
+                      <div class="col-md-2" style="margin:0">
+                        <td ><button type="submit" id="feipei" class="btn btn-default ">分配IP</button></td>
+                      </div>
+                 </tr>   
                 <div class="col-md-offset-1 col-md-11">
                     {{form.disk.errors}}
                 </div>

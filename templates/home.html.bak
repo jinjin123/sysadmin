@@ -1,0 +1,58 @@
+{% extends "common/base.side.html" %}
+
+{% block title %}
+    首页
+{% endblock %}
+
+{% block rcontent %}
+<form class="form-horizontal " id="TongjiForm" role="form" action={% url "tongji" %} method="GET" >
+  <div class="form-group">
+    <div class="col-md-1 ">
+      <button type="submit" id="tongji" class="btn btn-primary ">刷新统计信息</button>
+    </div>
+  </div>
+</form>
+
+<div class="row-fluid">
+  <div class="span6">
+    <table class="table table-bordered">
+      <thead>
+        <caption><h2>截止当前 工作量统计</h3></caption>
+        <tr>
+          <th>编号</th>
+          <th>工作内容</th>
+          <th>数量</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr bgcolor=#ffccCC>
+          <td>1</td>
+          <td>搭建x86平台项目</td >
+          <td>912</td>
+        </tr>
+        <tr class="success">
+          <td>2</td>
+          <td>部署虚拟机</td>
+          <td>4478</td>
+        </tr>
+        <tr class="error">
+          <td>3</td>
+          <td>配置物理机</td>
+          <td>837</td>
+        </tr>
+        <tr class="warning">
+          <td>4</td>
+          <td>配置负载均衡器</td>
+          <td>635</td>
+        </tr>
+        <tr class="info">
+          <td>5</td>
+          <td>维护加密机白名单</td>
+          <td>385</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}

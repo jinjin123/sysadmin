@@ -22,7 +22,7 @@ urlpatterns = patterns('',
     # Examples:
 
     #url(r'^admin/', include(admin.site.urls)),
-    url(r'^$',Home),
+    url(r'^$',Home,name='home'),
     url(r'^accounts/',include('UserManage.urls' )),
     url(r'^install/',include('AutoInst.urls' )),
     url(r'^project/',include('ProjectManage.urls' )),
