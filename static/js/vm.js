@@ -18,3 +18,28 @@
                     } 
 
        }
+        function ipshuli(){
+            var sel3=document.getElementsByName('ipcount')[0].value;
+                    if (sel3 =="1"){
+                       document.getElementById("vip_div").style.display="none";
+                       document.getElementById("vip").value="";
+                       document.getElementById("scanip_div").style.display="none";
+                       document.getElementById("scanip").value="";
+                    }
+                    if (sel3=="2"){
+                       document.getElementById("vip_div").style.display="none";
+                       document.getElementById("vip").value="";
+                       document.getElementById("scanip_div").style.display="none";
+                       document.getElementById("scanip").value="";
+                       document.getElementById("vip_div").style.display="block";
+                    }
+                    if (sel3 =="3"){
+                       document.getElementById("vip_div").style.display="none";
+                       document.getElementById("vip").value="";
+                       document.getElementById("scanip_div").style.display="none";
+                       document.getElementById("scanip").value="";
+                       document.getElementById("vip_div").style.display="block";
+                       document.getElementById("scanip_div").style.display="block";
+                    } 
+
+       }

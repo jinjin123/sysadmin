@@ -133,11 +133,11 @@ class ProjectForm(forms.ModelForm):
         self.fields['createuser'].label=u'搭建人员'
         self.fields['createuser'].widget.attrs={'class':'form-control'}
         self.fields['starttime'].label=u'达到时间'
-        self.fields['starttime'].widget.attrs={'class':'form-control form_datetime'}
+        self.fields['starttime'].widget.attrs={'class':'form-control form_datetime','readonly':'True'}
         self.fields['endtime'].label=u'截止时间'
-        self.fields['endtime'].widget.attrs={'class':'form-control form_datetime'}
+        self.fields['endtime'].widget.attrs={'class':'form-control form_datetime','readonly':'True'}
         self.fields['finishtime'].label=u'完成时间'
-        self.fields['finishtime'].widget.attrs={'class':'form-control form_datetime'}
+        self.fields['finishtime'].widget.attrs={'class':'form-control form_datetime','readonly':'True'}
         self.fields['reason'].label=u'超时理由'
         self.fields['reason'].widget.attrs={'class':'form-control'}
         self.fields['batch'].label=u'项目批次'
@@ -211,6 +211,7 @@ class VmForm(forms.ModelForm):
         self.fields['ip'].widget.attrs={'class':'form-control'}
         self.fields['mask'].label=u'子网掩码'
         self.fields['mask'].widget.choices=MASK_CHOICES
+        self.fields['mask'].widget.attrs={'class':'form-control'}
         self.fields['gateway'].label=u'网关'
         self.fields['gateway'].widget.attrs={'class':'form-control'}
         self.fields['domain'].label=u'所在域'
