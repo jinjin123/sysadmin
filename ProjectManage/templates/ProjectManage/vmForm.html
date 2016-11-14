@@ -259,7 +259,7 @@ pan>虚拟机录入</a>
                 type: "GET",  
                 url: "/project/vm/getip/",  
                 dateType: "json",  
-                data:{'ipcount':$("#ipcount").val(),'ID':$("#id_cluster").val()},  
+                data:{'ipcount':$("#ipcount").val(),'ID':$("#id_cluster").val(),'PID':$("#id_pm").val()},  
                 success: function(returnedData){  
                     $("#id_ip").val(returnedData['ip']);  
                     $("#id_gateway").val(returnedData['gateway']);  

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #-*- coding: utf-8 -*-
 from ResourceManage.models import Vlan,VlanGroup
-from ProjectManage.models import Vm,Cluster
+from ProjectManage.models import Vm,Cluster,Pm
 from django.contrib.auth.decorators import login_required
 from UserManage.views.permission import PermissionVerify
 from django.http import HttpResponse,JsonResponse
@@ -17,7 +17,8 @@ def sort_ip_list(ip_list):
 @login_required
 @PermissionVerify()
 def getip(request):
-        ID= int(request.GET['ID'])
+        ID= request.GET['ID']
+        PID= request.GET['PID']
         ipcount= int(request.GET['ipcount'])
 
         #定义网段类型中所有ip地址列表
@@ -26,7 +27,12 @@ def getip(request):
         iplist2=[]
         #定义网段类型中可用ip地址列表
         iplist3=[]
-        vlangroup_id= Cluster.objects.get(id = ID).vlangroup_id
+        if ID !='':
+            vlangroup_id= Cluster.objects.get(id = int(ID)).vlangroup_id
+        if PID != '':
+            vlangroup_id= Pm.objects.get(id = int(PID)).vlangroup_id
+        print vlangroup_id
+
         vlangroupobject = VlanGroup.objects.get(id=vlangroup_id)
         vlanqueryset = vlangroupobject.vlan.all()
         for i in vlanqueryset:

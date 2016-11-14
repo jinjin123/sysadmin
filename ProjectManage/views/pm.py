@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from ProjectManage.forms import PmForm
 from ProjectManage.models import Pm,Cluster,Project
-from ResourceManage.models import Storage
+from ResourceManage.models import Storage,StorageGroup,VlanGroup,Vlan
 from website.common.CommonPaginator import SelfPaginator
 from UserManage.views.permission import PermissionVerify
 
@@ -20,30 +20,30 @@ def pminput(request):
     if request.method == 'POST':
         form = PmForm(request.POST)
         if form.is_valid():
-            '''
             pm = form.save(commit=False)
-            if pm.cluster_id != None:
-                ttcore=0
-                ttmem=0
-                usedmem=Cluster.objects.get(id = pm.cluster_id).usedmem
-                usedcore=Cluster.objects.get(id = pm.cluster_id).usedcore
-                pmqueryset= Pm.objects.filter(cluster_id = pm.cluster_id)
-                for i in pmqueryset:
-                    cpu=i.cpu
-                    mem=i.memory
-                    ttcore=ttcore+cpu
-                    ttmem=ttmem+mem
-                ttcore=ttcore+pm.cpu
-                ttmem=ttmem+pm.memory
-                sycore=ttcore-usedcore
-                symem=ttmem-usedmem
-               Cluster.objects.filter(id=pm.cluster_id).update(ttcore=ttcore,ttmem=ttmem,symem=symem,sycore=sycore)
-            ''' 
+            if pm.role ==u"物理单机宿主机":
+                if pm.storagegroup_id !='':
+                    StorageGroup.objects.filter(id=pm.storagegroup_id).update(is_selected=1)
+                if pm.storagegroup_id !='':
+                    VlanGroup.objects.filter(id=pm.vlangroup_id).update(is_selected=1)
+            elif pm.role ==u"物理单机":
+                if pm.storagegroup_id !='':
+                    StorageGroup.objects.filter(id=pm.storagegroup_id).update(is_selected=1)
+                if pm.vlangroup_id !='':
+                    VlanGroup.objects.filter(id=pm.vlangroup_id).update(is_selected=1)
+            else :
+                storagegroup_id=Cluster.objects.get(id=pm.cluster_id).storagegroup_id
+                vlangroup_id=Cluster.objects.get(id=pm.cluster_id).vlangroup_id
+                StorageGroup.objects.filter(id=storagegroup_id).update(is_selected=1)
+                VlanGroup.objects.filter(id=vlangroup_id).update(is_selected=1)
+                
             form.save()
             return HttpResponseRedirect(reverse('pmlist'))
 
     else:
         form = PmForm()
+        form.fields['vlangroup'].queryset=VlanGroup.objects.filter(is_selected=0)
+        form.fields['storagegroup'].queryset=StorageGroup.objects.filter(is_selected=0)
     kwvars = {
         'form':form,
         'request':request,
@@ -70,28 +70,13 @@ def pmlist(request):
 @PermissionVerify()
 @login_required
 def pmdelete(request,ID):
-    '''
-    bcpm= Pm.objects.get(id = ID)
-    bcpmcluster_id=bcpm.cluster_id
-    bccpu=bcpm.cpu
-    bcmem=bcpm.memory
-    bcttcore1=0
-    bcttmem1=0
-    bcusedcore1=Cluster.objects.get(id =bcpmcluster_id ).usedcore
-    bcusedmem1=Cluster.objects.get(id =bcpmcluster_id ).usedmem
-    pmqueryset= Pm.objects.filter(cluster_id = bcpmcluster_id)
-    for i in pmqueryset:
-        cpu=i.cpu
-        mem=i.memory
-        bcttcore1=bcttcore1+cpu
-        bcttmem1=bcttmem1+mem
-    bcttcore1=bcttcore1-bccpu
-    bcttmem1=bcttmem1-bcmem
-    bcsycore1=bcttcore1-bcusedcore1
-    bcsymem1=bcttmem1-bcusedmem1
-    Cluster.objects.filter(id=bcpmcluster_id).update(ttcore=bcttcore1,sycore=bcsycore1,ttmem=bcttmem1,symem=bcsymem1)
-    '''
-    Pm.objects.filter(id = ID).delete()
+    pm=Pm.objects.get(id=ID)
+    if pm.storagegroup_id !='':
+        print pm.storagegroup_id
+        StorageGroup.objects.filter(id=pm.storagegroup_id).update(is_selected=0)
+    if pm.vlangroup_id !='':
+        VlanGroup.objects.filter(id=pm.vlangroup_id).update(is_selected=0)
+    pm.delete()
  
 
     return HttpResponseRedirect(reverse('pmlist'))
@@ -101,96 +86,35 @@ def pmdelete(request,ID):
 @login_required
 def pmedit(request,ID):
     bcpm= Pm.objects.get(id = ID)
-    '''
-    bcpmcluster_id=bcpm.cluster_id
-    bccpu=bcpm.cpu
-    bcmem=bcpm.memory
-    '''
+    if bcpm.storagegroup_id !='':
+        StorageGroup.objects.filter(id=bcpm.storagegroup_id).update(is_selected=0)
+    if bcpm.vlangroup_id !='':
+        VlanGroup.objects.filter(id=bcpm.vlangroup_id).update(is_selected=0)
+    
     if request.method=='POST':
         form = PmForm(request.POST,instance=bcpm)
         if form.is_valid():
-            '''
-            acpm = form.save(commit=False)
-            acpmcluster_id=acpm.cluster_id
-            print "clusterid"
-            print acpmcluster_id
-            #物理机变更前后均属于集群
-            if bcpmcluster_id != None and acpmcluster_id != None:
-                bcttcore1=0
-                bcttmem1=0
-                bcusedcore1=Cluster.objects.get(id =bcpmcluster_id ).usedcore
-                bcusedmem1=Cluster.objects.get(id =bcpmcluster_id ).usedmem
-                pmqueryset= Pm.objects.filter(cluster_id = bcpmcluster_id)
-                for i in pmqueryset:
-                    cpu=i.cpu
-                    mem=i.memory
-                    bcttcore1=bcttcore1+cpu
-                    bcttmem1=bcttmem1+mem
-                bcsycore1=bcttcore1-bcusedcore1
-                bcsymem1=bcttmem1-bcusedmem1
-                accpu=acpm.cpu
-                acmem=acpm.memory
-                #不变更cluster信息
-                if bcpmcluster_id==acpmcluster_id:
-                    ttcore=bcttcore1-bccpu+accpu
-                    ttmem=bcttmem1-bcmem+acmem
-                    sycore=bcsycore1-bccpu+accpu
-                    symem=bcsymem1-bcmem+acmem
-                    Cluster.objects.filter(id=bcpmcluster_id).update(ttcore=ttcore,sycore=sycore,ttmem=ttmem,symem=symem)
-                #变更集群信息 
-                else :
-                    bcttcore2=Cluster.objects.get(id=acpmcluster_id).ttcore
-                    bcsycore2=Cluster.objects.get(id=acpmcluster_id).sycore
-                    bcttmem2=Cluster.objects.get(id=acpmcluster_id).ttmem
-                    bcsymem2=Cluster.objects.get(id=acpmcluster_id).symem
-                    acttcore2=bcttcore2+accpu
-                    acsycore2=bcsycore2+accpu
-                    acttmem2=bcttmem2+acmem
-                    acsymem2=bcsymem2+acmem
-                    Cluster.objects.filter(id=acpmcluster_id).update(ttcore=acttcore2,sycore=acsycore2,ttmem=acttmem2,symem=acsymem2)
-                    acttcore1=bcttcore1-bccpu
-                    acsycore1=bcsycore1-bccpu
-                    acttmem1=bcttmem1-bcmem
-                    acsymem1=bcsymem1-bcmem
-                    Cluster.objects.filter(id=bcpmcluster_id).update(ttcore=acttcore1,sycore=acsycore1,ttmem=acttmem1,symem=acsymem1)
-            #从cluster变为单机
-            elif bcpmcluster_id != None and acpmcluster_id ==None: 
-                bcttcore1=0
-                bcttmem1=0
-                bcusedcore1=Cluster.objects.get(id =bcpmcluster_id ).usedcore
-                bcusedmem1=Cluster.objects.get(id =bcpmcluster_id ).usedmem
-                pmqueryset= Pm.objects.filter(cluster_id = bcpmcluster_id)
-                for i in pmqueryset:
-                    cpu=i.cpu
-                    mem=i.memory
-                    bcttcore1=bcttcore1+cpu
-                    bcttmem1=bcttmem1+mem
-                bcttcore1=bcttcore1-bccpu
-                bcttmem1=bcttmem1-bcmem
-
-                bcsycore1=bcttcore1-bcusedcore1
-                bcsymem1=bcttmem1-bcusedmem1
-                Cluster.objects.filter(id=bcpmcluster_id).update(ttcore=bcttcore1,sycore=bcsycore1,ttmem=bcttmem1,symem=bcsymem1)
-            #从单机变为集群
-            elif bcpmcluster_id == None and acpmcluster_id != None:
-                accpu=acpm.cpu
-                acmem=acpm.memory
-                bcttcore2=Cluster.objects.get(id=acpmcluster_id).ttcore
-                bcsycore2=Cluster.objects.get(id=acpmcluster_id).sycore
-                bcttmem2=Cluster.objects.get(id=acpmcluster_id).ttmem
-                bcsymem2=Cluster.objects.get(id=acpmcluster_id).symem
-                acttcore2=bcttcore2+accpu
-                acsycore2=bcsycore2+accpu
-                acttmem2=bcttmem2+acmem
-                acsymem2=bcsymem2+acmem
-                Cluster.objects.filter(id=acpmcluster_id).update(ttcore=acttcore2,sycore=acsycore2,ttmem=acttmem2,symem=acsymem2)
+            pm = form.save(commit=False)
+            if pm.role == u"物理单机宿主机":
+                StorageGroup.objects.filter(id=pm.storagegroup_id).update(is_selected=1)
+                VlanGroup.objects.filter(id=pm.vlangroup_id).update(is_selected=1)
+            elif pm.role == u"物理单机":
+                if pm.storagegroup_id !='':
+                    StorageGroup.objects.filter(id=pm.storagegroup_id).update(is_selected=1)
+                if pm.vlangroup_id !='':
+                    VlanGroup.objects.filter(id=pm.vlangroup_id).update(is_selected=1)
             else :
-                pass                
-            '''
+                storagegroup_id=Cluster.objects.get(id=pm.cluster_id).storagegroup_id
+                vlangroup_id=Cluster.objects.get(id=pm.cluster_id).vlangroup_id
+                StorageGroup.objects.filter(id=storagegroup_id).update(is_selected=1)
+                VlanGroup.objects.filter(id=vlangroup_id).update(is_selected=1)
+                            
             form.save()
             return HttpResponseRedirect(reverse('pmlist'))
     else:
         form = PmForm(instance=bcpm)
+        form.fields['vlangroup'].queryset=VlanGroup.objects.filter(is_selected=0)
+        form.fields['storagegroup'].queryset=StorageGroup.objects.filter(is_selected=0)
 
     kwvars = {
         'ID':ID,
@@ -205,13 +129,33 @@ def pmedit(request,ID):
 @login_required
 def pmrepl(request,ID):
     bcpm= Pm.objects.get(id = ID)
+    if bcpm.storagegroup_id !='':
+        StorageGroup.objects.filter(id=bcpm.storagegroup_id).update(is_selected=0)
+    if bcpm.vlangroup_id !='':
+        VlanGroup.objects.filter(id=bcpm.vlangroup_id).update(is_selected=0)
     if request.method=='POST':
         form = PmForm(request.POST,instance=bcpm)
         if form.is_valid():
+            pm = form.save(commit=False)
+            if pm.role == u"物理单机宿主机":
+                StorageGroup.objects.filter(id=pm.storagegroup_id).update(is_selected=1)
+                VlanGroup.objects.filter(id=pm.vlangroup_id).update(is_selected=1)
+            elif pm.role == u"物理单机":
+                if pm.storagegroup_id !='':
+                    StorageGroup.objects.filter(id=pm.storagegroup_id).update(is_selected=1)
+                if pm.vlangroup_id !='':
+                    VlanGroup.objects.filter(id=pm.vlangroup_id).update(is_selected=1)
+            else :
+                storagegroup_id=Cluster.objects.get(id=pm.cluster_id).storagegroup_id
+                vlangroup_id=Cluster.objects.get(id=pm.cluster_id).vlangroup_id
+                StorageGroup.objects.filter(id=storagegroup_id).update(is_selected=1)
+                VlanGroup.objects.filter(id=vlangroup_id).update(is_selected=1)
             form.save()
             return HttpResponseRedirect(reverse('pmlist'))
     else:
         form = PmForm(instance=bcpm)
+        form.fields['vlangroup'].queryset=VlanGroup.objects.filter(is_selected=0)
+        form.fields['storagegroup'].queryset=StorageGroup.objects.filter(is_selected=0)
 
     kwvars = {
         'ID':ID,

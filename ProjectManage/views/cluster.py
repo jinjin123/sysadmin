@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from ProjectManage.forms import ClusterForm
 from ProjectManage.models import Cluster,Vm,Project,Pm
-from ResourceManage.models import Storage,StorageGroup
+from ResourceManage.models import Storage,StorageGroup,VlanGroup,Vlan
 from website.common.CommonPaginator import SelfPaginator
 from UserManage.views.permission import PermissionVerify
 
@@ -20,11 +20,16 @@ def clusterinput(request):
     if request.method == 'POST':
         form = ClusterForm(request.POST)
         if form.is_valid():
+            cluster=form.save(commit=False)
+            StorageGroup.objects.filter(id=cluster.storagegroup_id).update(is_selected=1)
+            VlanGroup.objects.filter(id=cluster.vlangroup_id).update(is_selected=1)
             form.save()
             return HttpResponseRedirect(reverse('clusterlist'))
 
     else:
         form = ClusterForm()
+        form.fields['vlangroup'].queryset=VlanGroup.objects.filter(is_selected=0)
+        form.fields['storagegroup'].queryset=StorageGroup.objects.filter(is_selected=0)
     kwvars = {
         'form':form,
         'request':request,
@@ -50,7 +55,10 @@ def clusterlist(request):
 @PermissionVerify()
 @login_required
 def clusterdelete(request,ID):
-    Cluster.objects.filter(id = ID).delete()
+    cluster=Cluster.objects.filter(id = ID)
+    StorageGroup.objects.filter(id=cluster.storagegroup_id).update(is_selected=1)
+    VlanGroup.objects.filter(id=cluster.vlangroup_id).update(is_selected=1)
+    cluster.delete()
 
     return HttpResponseRedirect(reverse('clusterlist'))
 
@@ -59,14 +67,21 @@ def clusterdelete(request,ID):
 @login_required
 def clusteredit(request,ID):
     cl= Cluster.objects.get(id = ID)
+    StorageGroup.objects.filter(id=cl.storagegroup_id).update(is_selected=0)
+    VlanGroup.objects.filter(id=cl.vlangroup_id).update(is_selected=0)
 
     if request.method=='POST':
         form = ClusterForm(request.POST,instance=cl)
         if form.is_valid():
+            cluster=form.save(commit=False)
+            StorageGroup.objects.filter(id=cluster.storagegroup_id).update(is_selected=1)
+            VlanGroup.objects.filter(id=cluster.vlangroup_id).update(is_selected=1)
             form.save()
             return HttpResponseRedirect(reverse('clusterlist'))
     else:
         form = ClusterForm(instance=cl)
+        form.fields['vlangroup'].queryset=VlanGroup.objects.filter(is_selected=0)
+        form.fields['storagegroup'].queryset=StorageGroup.objects.filter(is_selected=0)
 
     kwvars = {
         'ID':ID,

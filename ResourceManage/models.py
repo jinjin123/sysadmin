@@ -22,6 +22,7 @@ class VlanGroup(models.Model):
     ttip = models.IntegerField(verbose_name=u'网段组IP个数',default=0,blank=True)
     syip = models.IntegerField(verbose_name=u'网段组剩余IP个数',default=0,blank=True)
     usedip = models.IntegerField(verbose_name=u'网段组已用IP个数',default=0,blank=True)
+    is_selected = models.BooleanField(default=False,verbose_name=u'是否已用')
     remark = models.CharField(max_length=200,blank=True,null=True,verbose_name=u'备注')
 
     def __unicode__(self):
@@ -35,6 +36,7 @@ class StorageGroup(models.Model):
     ttstorage = models.IntegerField(verbose_name=u'存储组大小',default=0,blank=True)
     systorage = models.IntegerField(verbose_name=u'存储组剩余大小',default=0,blank=True)
     usedstorage = models.IntegerField(verbose_name=u'存储组已用大小',default=0,blank=True)
+    is_selected = models.BooleanField(default=False,verbose_name=u'是否已用')
     remark=models.CharField(max_length=200,blank=True,null=True,verbose_name=u'备注')
 
     def __unicode__(self):
