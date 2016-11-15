@@ -106,13 +106,13 @@ def projectquery(request):
     batch = request.GET.get('batch')
     createuser = request.GET.get('createuser')
     if env != '':
-        kwargs['env'] = env 
+        kwargs['env__contains'] = env 
     if shortname != '':
-        kwargs['shortname'] = shortname 
+        kwargs['shortname__contains'] = shortname 
     if projectname != '':
-        kwargs['projectname'] = projectname 
+        kwargs['projectname__contains'] = projectname 
     if batch != '':
-        kwargs['batch'] = batch
+        kwargs['batch__contains'] = batch
     if createuser !='':
         try:
             tmpobject=User.objects.get(username=createuser)

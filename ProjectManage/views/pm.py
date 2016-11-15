@@ -175,11 +175,11 @@ def pmquery(request):
     cluster = request.GET.get('cluster')
     os = request.GET.get('os')
     if pmname != '':
-        kwargs['pmname'] = pmname 
+        kwargs['pmname__contains'] = pmname 
     if ip != '':
-        kwargs['ip'] = ip 
+        kwargs['ip__contains'] = ip 
     if ilo_ip != '':
-        kwargs['ilo_ip'] = ilo_ip 
+        kwargs['ilo_ip__contains'] = ilo_ip 
     if cluster !='':
         try:
             tmpobject=Cluster.objects.get(clustername=cluster)
@@ -189,7 +189,7 @@ def pmquery(request):
             cluster_id=tmpobject.id
             kwargs['cluster_id'] = cluster_id
     if os !='':
-        kwargs['os'] = os
+        kwargs['os__contains'] = os
 
     mList = Pm.objects.filter(**kwargs)
     print kwargs

@@ -86,15 +86,15 @@ def softwarequery(request):
     arch = request.GET.get('arch')
     type = request.GET.get('type')
     if softwarename != '':
-        kwargs['softwarename'] = softwarename 
+        kwargs['softwarename__contains'] = softwarename 
     if version != '':
-        kwargs['version'] = version
+        kwargs['version__contains'] = version
     if platform != '':
-        kwargs['platform'] = platform 
+        kwargs['platform__contains'] = platform 
     if arch != '':
-        kwargs['arch'] = arch
+        kwargs['arch__contains'] = arch
     if type != '':
-        kwargs['type'] = type 
+        kwargs['type__contains'] = type 
     mList = Software.objects.filter(**kwargs)
     print kwargs
 

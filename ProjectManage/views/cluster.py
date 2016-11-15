@@ -17,6 +17,7 @@ from UserManage.views.permission import PermissionVerify
 @PermissionVerify()
 @login_required
 def clusterinput(request):
+    '''录入集群信息'''
     if request.method == 'POST':
         form = ClusterForm(request.POST)
         if form.is_valid():
@@ -40,6 +41,7 @@ def clusterinput(request):
 @PermissionVerify()
 @login_required
 def clusterlist(request):
+    '''展示集群信息'''
     mList = Cluster.objects.all()
 
     #分页功能
@@ -55,6 +57,7 @@ def clusterlist(request):
 @PermissionVerify()
 @login_required
 def clusterdelete(request,ID):
+    '''删除集群信息'''
     cluster=Cluster.objects.filter(id = ID)
     StorageGroup.objects.filter(id=cluster.storagegroup_id).update(is_selected=1)
     VlanGroup.objects.filter(id=cluster.vlangroup_id).update(is_selected=1)
@@ -66,6 +69,7 @@ def clusterdelete(request,ID):
 @PermissionVerify()
 @login_required
 def clusteredit(request,ID):
+    '''编辑集群信息'''
     cl= Cluster.objects.get(id = ID)
     StorageGroup.objects.filter(id=cl.storagegroup_id).update(is_selected=0)
     VlanGroup.objects.filter(id=cl.vlangroup_id).update(is_selected=0)
@@ -95,6 +99,7 @@ def clusteredit(request,ID):
 @PermissionVerify()
 @login_required
 def clustershowpm(request,ID):
+    '''显示选定集群对应物理机'''
     cl= Cluster.objects.get(id = ID)
     
     mList = cl.pm_set.all()
@@ -113,6 +118,7 @@ def clustershowpm(request,ID):
 @PermissionVerify()
 @login_required
 def clustershowvm(request,ID):
+    '''显示选定集群对应虚拟机'''
     cl= Cluster.objects.get(id = ID)
     
     mList = cl.vm_set.all()
@@ -132,19 +138,20 @@ def clustershowvm(request,ID):
 @PermissionVerify()
 @login_required
 def clusterquery(request):
+    '''集群信息查询'''
     if request.GET.has_key("query"):
         kwargs ={}
         clustername = request.GET.get('clustername')
         platform = request.GET.get('platform')
         vcaddress = request.GET.get('vcaddress')
         if clustername != '':
-            kwargs['clustername'] = clustername 
+            kwargs['clustername__contains'] = clustername 
         if platform != '':
-            kwargs['platform'] = platform 
+            kwargs['platform__contains'] = platform 
         if vcaddress != '':
-            kwargs['vcaddress'] = vcaddress 
+            kwargs['vcaddress__contains'] = vcaddress 
+        print kwargs
         mList = Cluster.objects.filter(**kwargs)
-        print kwargs	
 
         lst = SelfPaginator(request,mList, 20)
 
@@ -160,6 +167,7 @@ def clusterquery(request):
 @login_required
 @PermissionVerify()
 def clusterflush(request):
+    '''集群信息刷新'''
     tmpdict={}
     idlist=[]
     ids=Cluster.objects.values("id")

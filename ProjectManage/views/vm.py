@@ -135,13 +135,13 @@ def vmquery(request):
     role = request.GET.get('role')
     os = request.GET.get('os')
     if vmname != '':
-        kwargs['vmname'] = vmname 
+        kwargs['vmname__contains'] = vmname 
     if ip != '':
-        kwargs['ip'] = ip 
+        kwargs['ip__contains'] = ip 
     if role != '':
-        kwargs['role'] = role
+        kwargs['role__contains'] = role
     if os != '':
-        kwargs['os'] = os 
+        kwargs['os__contains'] = os 
     if project !='':
         try:
             tmpobject=Project.objects.get(projectname=project)

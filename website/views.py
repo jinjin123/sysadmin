@@ -6,15 +6,17 @@ from django.http import HttpResponse,HttpResponseRedirect
 from django.shortcuts import render_to_response,RequestContext,render
 from ResourceManage.models import Tongji,StorageGroup,Storage,Software
 from ProjectManage.models import Vm,Pm,Cluster,Project
+import json
 @login_required
 def Home(request):
-    
+    '''
     #建表
     Tongji.objects.all().delete()
     typelist=["搭建项目","物理机总数","虚拟机总数","存储总数","集群总数","CPU总核数","内存总数","虚拟机已用CPU总核数","虚拟机已用内存总数","虚拟机已用存储总数","软件总数","单机宿主物理机","集群宿主物理机","物理单机","Linux虚拟机","Windows虚拟机","其他类型虚拟机"]
     for i in typelist:
         p=Tongji(tongjitype=i,count=0)
         p.save()
+    '''
     #统计
     totalproject=Project.objects.count()
     totalvm=Vm.objects.count()
@@ -71,24 +73,27 @@ def Home(request):
     Tongji.objects.filter(tongjitype="Linux虚拟机").update(count=lnxvm)
     Tongji.objects.filter(tongjitype="其他类型虚拟机").update(count=qtvm)
     #获取表对象
-    project = Tongji.objects.get(tongjitype="搭建项目")
-    pm = Tongji.objects.get(tongjitype="物理机总数")
-    vm = Tongji.objects.get(tongjitype="虚拟机总数")
-    storage = Tongji.objects.get(tongjitype="存储总数")
-    mem = Tongji.objects.get(tongjitype="内存总数")
-    cpu= Tongji.objects.get(tongjitype="CPU总核数")
-    cluster = Tongji.objects.get(tongjitype="集群总数")
-    usedcpu = Tongji.objects.get(tongjitype="虚拟机已用CPU总核数")
-    usedmem = Tongji.objects.get(tongjitype="虚拟机已用内存总数")
-    usedstorage = Tongji.objects.get(tongjitype="虚拟机已用存储总数")
-    soft = Tongji.objects.get(tongjitype="软件总数")
-    djszwlj = Tongji.objects.get(tongjitype="单机宿主物理机")
-    jqszwlj = Tongji.objects.get(tongjitype="集群宿主物理机")
-    wldj = Tongji.objects.get(tongjitype="物理单机")
-    linux = Tongji.objects.get(tongjitype="Linux虚拟机")
-    window = Tongji.objects.get(tongjitype="Windows虚拟机")
-    othervm = Tongji.objects.get(tongjitype="其他类型虚拟机")
-    kwvars = {
+    project = Tongji.objects.get(tongjitype="搭建项目").count
+    pm = Tongji.objects.get(tongjitype="物理机总数").count
+    vm = Tongji.objects.get(tongjitype="虚拟机总数").count
+    storage = Tongji.objects.get(tongjitype="存储总数").count
+    mem = Tongji.objects.get(tongjitype="内存总数").count
+    cpu= Tongji.objects.get(tongjitype="CPU总核数").count
+    cluster = Tongji.objects.get(tongjitype="集群总数").count
+    usedcpu = Tongji.objects.get(tongjitype="虚拟机已用CPU总核数").count
+    usedmem = Tongji.objects.get(tongjitype="虚拟机已用内存总数").count
+    usedstorage = Tongji.objects.get(tongjitype="虚拟机已用存储总数").count
+    systorage=storage-usedstorage
+    sycpu=cpu-usedcpu
+    symem=mem-usedmem
+    soft = Tongji.objects.get(tongjitype="软件总数").count
+    djszwlj = Tongji.objects.get(tongjitype="单机宿主物理机").count
+    jqszwlj = Tongji.objects.get(tongjitype="集群宿主物理机").count
+    wldj = Tongji.objects.get(tongjitype="物理单机").count
+    linux = Tongji.objects.get(tongjitype="Linux虚拟机").count
+    windows = Tongji.objects.get(tongjitype="Windows虚拟机").count
+    othervm = Tongji.objects.get(tongjitype="其他类型虚拟机").count
+    Dict = {
         'project':project,
         'pm':pm,
         'vm':vm,
@@ -104,9 +109,12 @@ def Home(request):
         'jqszwlj':jqszwlj,
         'wldj':wldj,
         'linux':linux,
-        'window':window,
+        'windows':windows,
         'othervm':othervm,
-        'request':request,
+        'systorage':systorage,
+        'sycpu':sycpu,
+        'symem':symem,
     }
 
-    return render_to_response('home.html',kwvars,RequestContext(request))
+    #return render_to_response('home.html',kwvars,RequestContext(request))
+    return render(request,'home.html',{'Dict':json.dumps(Dict)})
