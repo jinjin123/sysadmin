@@ -1,17 +1,16 @@
 #!/usr/bin/env python
-#-*- coding: utf-8 -*-
-#import paramiko
-#import os,hashlib
-from django.shortcuts import render
+# -*- coding: utf-8 -*-
+
+
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse,HttpResponseRedirect
-from django.shortcuts import render_to_response,RequestContext
+from django.http import HttpResponseRedirect
+from django.shortcuts import render_to_response, RequestContext
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.csrf import csrf_exempt
 from ResourceManage.forms import SoftwareForm
 from ResourceManage.models import Software
 from website.common.CommonPaginator import SelfPaginator
 from UserManage.views.permission import PermissionVerify
+
 
 @PermissionVerify()
 @login_required
@@ -21,65 +20,58 @@ def softwareinput(request):
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(reverse('softwarelist'))
-
     else:
         form = SoftwareForm()
     kwvars = {
-        'form':form,
-        'request':request,
+        'form': form,
+        'request': request,
     }
-    return render_to_response('ResourceManage/softwareForm.html',kwvars,RequestContext(request))
-
+    return render_to_response('ResourceManage/softwareForm.html', kwvars, RequestContext(request))
 
 
 @PermissionVerify()
 @login_required
 def softwarelist(request):
-    mList = Software.objects.all()
-
-    #分页功能
-    lst = SelfPaginator(request,mList, 20)
-
+    mlist = Software.objects.all()
+    # 分页功能
+    lst = SelfPaginator(request, mlist, 20)
     kwvars = {
-        'lPage':lst,
-        'request':request,
+        'lPage': lst,
+        'request': request,
     }
+    return render_to_response('ResourceManage/softwarelist.html', kwvars, RequestContext(request))
 
-    return render_to_response('ResourceManage/softwarelist.html',kwvars,RequestContext(request))
 
 @PermissionVerify()
 @login_required
-def softwaredelete(request,ID):
-    Software.objects.filter(id = ID).delete()
-
+def softwaredelete(request, ID):
+    Software.objects.filter(id=ID).delete()
     return HttpResponseRedirect(reverse('softwarelist'))
 
+
 @PermissionVerify()
 @login_required
-def softwareedit(request,ID):
-    soft= Software.objects.get(id = ID)
-
-    if request.method=='POST':
-        form = SoftwareForm(request.POST,instance=soft)
+def softwareedit(request, ID):
+    soft = Software.objects.get(id=ID)
+    if request.method == 'POST':
+        form = SoftwareForm(request.POST, instance=soft)
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(reverse('softwarelist'))
     else:
         form = SoftwareForm(instance=soft)
-
     kwvars = {
-        'ID':ID,
-        'form':form,
-        'request':request,
+        'ID': ID,
+        'form': form,
+        'request': request,
     }
-
-    return render_to_response('ResourceManage/softwareedit.html',kwvars,RequestContext(request))
+    return render_to_response('ResourceManage/softwareedit.html', kwvars, RequestContext(request))
 
 
 @PermissionVerify()
 @login_required
 def softwarequery(request):
-    kwargs ={}
+    kwargs = {}
     softwarename = request.GET.get('softwarename')
     version = request.GET.get('version')
     platform = request.GET.get('platform')
@@ -95,15 +87,11 @@ def softwarequery(request):
         kwargs['arch__contains'] = arch
     if type != '':
         kwargs['type__contains'] = type 
-    mList = Software.objects.filter(**kwargs)
-    print kwargs
-
-    #分页功能
-    lst = SelfPaginator(request,mList, 20)
-
+    mlist = Software.objects.filter(**kwargs)
+    # 分页功能
+    lst = SelfPaginator(request, mlist, 20)
     kwvars = {
-        'lPage':lst,
-        'request':request,
+        'lPage': lst,
+        'request': request,
     }
-
-    return render_to_response('ResourceManage/softwarelist.html',kwvars,RequestContext(request))
+    return render_to_response('ResourceManage/softwarelist.html', kwvars, RequestContext(request))

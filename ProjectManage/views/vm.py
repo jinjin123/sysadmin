@@ -1,137 +1,118 @@
 #!/usr/bin/env python
-#-*- coding: utf-8 -*-
-#import paramiko
-#import os,hashlib
-from django.shortcuts import render
+# -*- coding: utf-8 -*-
+# from django.shortcuts import render
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse,HttpResponseRedirect
-from django.shortcuts import render_to_response,RequestContext
+from django.http import HttpResponseRedirect
+from django.shortcuts import render_to_response
+from django.shortcuts import RequestContext
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.csrf import csrf_exempt
-from ProjectManage.forms import VmForm,VmQueryForm
-from ProjectManage.models import Vm,Project,Cluster,Pm
+from ProjectManage.forms import VmForm
+from ProjectManage.forms import VmQueryForm
+from ProjectManage.models import Vm
+from ProjectManage.models import Project
+from ProjectManage.models import Pm
 from website.common.CommonPaginator import SelfPaginator
 from UserManage.views.permission import PermissionVerify
 from website.common.export import daochuvm
 
+
 @PermissionVerify()
 @login_required
 def vminput(request):
+    """虚拟机录入"""
     if request.method == 'POST':
         form = VmForm(request.POST)
         if form.is_valid():
-            '''
             vm = form.save(commit=False)
-            ttstorage=Cluster.objects.get(id = vm.cluster_id).ttstorage
-            ttcore=Cluster.objects.get(id = vm.cluster_id).ttcore
-            ttmem=Cluster.objects.get(id = vm.cluster_id).ttmem
-            usedstorage=Cluster.objects.get(id = vm.cluster_id).usedstorage
-            usedcore=Cluster.objects.get(id = vm.cluster_id).usedcore
-            usedmem=Cluster.objects.get(id = vm.cluster_id).usedcore
-            usedstorage=usedstorage+vm.disk
-            usedcore=usedcore+vm.cpu
-            usedmem=usedmem+vm.mem
-            systorage=ttstorage-usedstorage
-            sycore=ttcore-usedcore
-            symem=ttmem-usedmem
-            Cluster.objects.filter(id=vm.cluster_id).update(usedcore=usedcore,usedstorage=usedstorage,usedmem=usedmem,sycore=sycore,symem=symem,systorage=systorage)
-            '''
-            vm = form.save(commit=False)
-            vm.batch=Project.objects.get(id=vm.project_id).batch
-            vm.env=Project.objects.get(id=vm.project_id).env
+            vm.batch = Project.objects.get(id=vm.project_id).batch
+            vm.env = Project.objects.get(id=vm.project_id).env
             form.save()
             return HttpResponseRedirect(reverse('vmlist'))
-
     else:
         form = VmForm()
-        form.fields['pm'].queryset=Pm.objects.filter(role="物理单机宿主机")
+        form.fields['pm'].queryset = Pm.objects.filter(role="物理单机宿主机")
     kwvars = {
-        'form':form,  
-        'request':request,
+        'form': form,
+        'request': request,
     }
-    return render_to_response('ProjectManage/vmForm.html',kwvars,RequestContext(request))
+    return render_to_response('ProjectManage/vmForm.html', kwvars, RequestContext(request))
 
 
 @PermissionVerify()
 @login_required
 def vmlist(request):
+    """虚拟机展示"""
     form = VmQueryForm()
-    mList = Vm.objects.all()
-
-    #分页功能
-    lst = SelfPaginator(request,mList, 20)
-
+    mlist = Vm.objects.all()
+    # 分页功能
+    lst = SelfPaginator(request, mlist, 20)
     kwvars = {
-        'lPage':lst,
-        'form':form,  
-        'request':request,
+        'lPage': lst,
+        'form': form,
+        'request': request,
     }
+    return render_to_response('ProjectManage/vmlist.html', kwvars, RequestContext(request))
 
-    return render_to_response('ProjectManage/vmlist.html',kwvars,RequestContext(request))
 
 @PermissionVerify()
 @login_required
-def vmdelete(request,ID):
-    Vm.objects.filter(id = ID).delete()
-
+def vmdelete(request, ID):
+    """虚拟机删除"""
+    Vm.objects.filter(id=ID).delete()
     return HttpResponseRedirect(reverse('vmlist'))
 
 
 @PermissionVerify()
 @login_required
 def vmedit(request,ID):
-    pj= Vm.objects.get(id = ID)
-
-    if request.method=='POST':
-        form = VmForm(request.POST,instance=pj)
+    """虚拟机编辑"""
+    pj = Vm.objects.get(id=ID)
+    if request.method == 'POST':
+        form = VmForm(request.POST, instance=pj)
         if form.is_valid():
             vm = form.save(commit=False)
-            vm.batch=Project.objects.get(id=vm.project_id).batch
-            vm.env=Project.objects.get(id=vm.project_id).env
+            vm.batch = Project.objects.get(id=vm.project_id).batch
+            vm.env = Project.objects.get(id=vm.project_id).env
             form.save()
             return HttpResponseRedirect(reverse('vmlist'))
     else:
         form = VmForm(instance=pj)
-
     kwvars = {
-        'ID':ID,
-        'form':form,
-        'request':request,
+        'ID': ID,
+        'form': form,
+        'request': request,
     }
-
-    return render_to_response('ProjectManage/vmedit.html',kwvars,RequestContext(request))
+    return render_to_response('ProjectManage/vmedit.html', kwvars, RequestContext(request))
 
 
 @PermissionVerify()
 @login_required
 def vmrepl(request,ID):
-    pj= Vm.objects.get(id = ID)
-
-    if request.method=='POST':
-        form = VmForm(request.POST,instance=pj)
+    """虚拟机复制"""
+    pj = Vm.objects.get(id=ID)
+    if request.method == 'POST':
+        form = VmForm(request.POST, instance=pj)
         if form.is_valid():
             vm = form.save(commit=False)
-            vm.batch=Project.objects.get(id=vm.project_id).batch
-            vm.env=Project.objects.get(id=vm.project_id).env
+            vm.batch = Project.objects.get(id=vm.project_id).batch
+            vm.env = Project.objects.get(id=vm.project_id).env
             form.save()
             return HttpResponseRedirect(reverse('vmlist'))
     else:
         form = VmForm(instance=pj)
-
     kwvars = {
-        'ID':ID,
-        'form':form,
-        'request':request,
+        'ID': ID,
+        'form': form,
+        'request': request,
     }
-
-    return render_to_response('ProjectManage/vmForm.html',kwvars,RequestContext(request))
-
+    return render_to_response('ProjectManage/vmForm.html', kwvars, RequestContext(request))
 
 
 @PermissionVerify()
 @login_required
 def vmquery(request):
-    kwargs ={}
+    """虚拟机查询"""
+    kwargs = {}
     vmname = request.GET.get('vmname')
     project = request.GET.get('project')
     ip = request.GET.get('ip')
@@ -145,28 +126,25 @@ def vmquery(request):
         kwargs['role__contains'] = role
     if os != '':
         kwargs['os__contains'] = os 
-    if project !='':
+    if project != '':
             kwargs['project_id'] = project
-    mList = Vm.objects.filter(**kwargs)
-    print kwargs
-
-    #分页功能
-    lst = SelfPaginator(request,mList, 20)
-    form=VmQueryForm()
-
+    mlist = Vm.objects.filter(**kwargs)
+    # 分页功能
+    lst = SelfPaginator(request, mlist, 20)
+    form = VmQueryForm()
     kwvars = {
-        'lPage':lst,
-        'form':form,  
-        'request':request,
+        'lPage': lst,
+        'form': form,
+        'request': request,
     }
+    return render_to_response('ProjectManage/vmlist.html', kwvars, RequestContext(request))
 
-    return render_to_response('ProjectManage/vmlist.html',kwvars,RequestContext(request))
 
 @login_required
 @PermissionVerify()
 def vmexport(request):
-    '''虚拟机信息导出'''
-    kwargs ={}
+    """虚拟机信息导出"""
+    kwargs = {}
     vmname = request.GET.get('vmname')
     project = request.GET.get('project')
     ip = request.GET.get('ip')
@@ -180,14 +158,14 @@ def vmexport(request):
         kwargs['role__contains'] = role
     if os != '':
         kwargs['os__contains'] = os 
-    if project !='':
+    if project != '':
             kwargs['project_id'] = project
-    fnstr=u'vm'
-    if kwargs =={}:
-        objs=Vm.objects.all()
+    fnstr = u'vm'
+    if kwargs == {}:
+        objs = Vm.objects.all()
     else:
         for k in kwargs:
-            fnstr=fnstr+'_'+kwargs[k]
+            fnstr = fnstr+'_'+kwargs[k]
         objs = Vm.objects.filter(**kwargs)
-    fn=fnstr+'.xls'
-    return daochuvm(objs,fn)
+    fn = fnstr+'.xls'
+    return daochuvm(objs, fn)
