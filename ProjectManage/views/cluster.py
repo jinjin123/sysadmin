@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 #import paramiko
 #import os,hashlib
 from django.shortcuts import render
@@ -13,6 +13,7 @@ from ProjectManage.models import Cluster,Vm,Project,Pm
 from ResourceManage.models import Storage,StorageGroup,VlanGroup,Vlan
 from website.common.CommonPaginator import SelfPaginator
 from UserManage.views.permission import PermissionVerify
+from website.common.export import daochucluster
 
 @PermissionVerify()
 @login_required
@@ -139,30 +140,28 @@ def clustershowvm(request,ID):
 @login_required
 def clusterquery(request):
     '''集群信息查询'''
-    if request.GET.has_key("query"):
-        kwargs ={}
-        clustername = request.GET.get('clustername')
-        platform = request.GET.get('platform')
-        vcaddress = request.GET.get('vcaddress')
-        if clustername != '':
-            kwargs['clustername__contains'] = clustername 
-        if platform != '':
-            kwargs['platform__contains'] = platform 
-        if vcaddress != '':
-            kwargs['vcaddress__contains'] = vcaddress 
-        print kwargs
-        mList = Cluster.objects.filter(**kwargs)
+    kwargs ={}
+    clustername = request.GET.get('clustername')
+    platform = request.GET.get('platform')
+    vcaddress = request.GET.get('vcaddress')
+    if clustername != '':
+        kwargs['clustername__contains'] = clustername 
+    if platform != '':
+        kwargs['platform__contains'] = platform 
+    if vcaddress != '':
+        kwargs['vcaddress__contains'] = vcaddress 
+    print kwargs
+    mList = Cluster.objects.filter(**kwargs)
 
-        lst = SelfPaginator(request,mList, 20)
+    lst = SelfPaginator(request,mList, 20)
 
-        kwvars = {
-            'lPage':lst,
-            'request':request,
-        }
+    kwvars = {
+        'lPage':lst,
+        'request':request,
+    }
 
-        return render_to_response('ProjectManage/clusterlist.html',kwvars,RequestContext(request))
-    else:
-        return HttpResponseRedirect(reverse('clusterflush'))
+    return render_to_response('ProjectManage/clusterlist.html',kwvars,RequestContext(request))
+      
 
 @login_required
 @PermissionVerify()
@@ -188,7 +187,6 @@ def clusterflush(request):
         usedmem=0
         usedstorage=0
         storagegroup_id=tmpdict[ID]
- 
         pmqueryset= Pm.objects.filter(cluster_id = ID)
         vmqueryset= Vm.objects.filter(cluster_id = ID)
         storagequeryset=Storage.objects.filter(storagegroup_id = storagegroup_id)
@@ -224,6 +222,32 @@ def clusterflush(request):
     }
 
     return render_to_response('ProjectManage/clusterlist.html',kwvars,RequestContext(request))
+
+@login_required
+@PermissionVerify()
+def clusterexport(request):
+    '''集群信息导出'''
+    kwargs ={}
+    clustername = request.GET.get('clustername')
+    platform = request.GET.get('platform')
+    vcaddress = request.GET.get('vcaddress')
+    if clustername != '':
+        kwargs['clustername__contains'] = clustername 
+    if platform != '':
+        kwargs['platform__contains'] = platform 
+    if vcaddress != '':
+        kwargs['vcaddress__contains'] = vcaddress 
+    fnstr=u'cluster'
+    if kwargs =={}:
+        objs=Cluster.objects.all()
+    else: 
+        for k in kwargs:
+            fnstr=fnstr+'_'+kwargs[k]
+        objs = Cluster.objects.filter(**kwargs)
+    fn=fnstr+'.xls'
+    return daochucluster(objs,fn)
+
+
 
 
 

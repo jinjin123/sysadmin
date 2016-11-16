@@ -8,11 +8,12 @@ from django.http import HttpResponse,HttpResponseRedirect
 from django.shortcuts import render_to_response,RequestContext
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
-from ProjectManage.forms import PmForm
+from ProjectManage.forms import PmForm,PmQueryForm
 from ProjectManage.models import Pm,Cluster,Project
 from ResourceManage.models import Storage,StorageGroup,VlanGroup,Vlan
 from website.common.CommonPaginator import SelfPaginator
 from UserManage.views.permission import PermissionVerify
+from website.common.export import daochupm
 
 @PermissionVerify()
 @login_required
@@ -54,6 +55,7 @@ def pminput(request):
 @PermissionVerify()
 @login_required
 def pmlist(request):
+    form = PmQueryForm()
     mList = Pm.objects.all()
 
     #分页功能
@@ -61,6 +63,7 @@ def pmlist(request):
 
     kwvars = {
         'lPage':lst,
+        'form':form,
         'request':request,
     }
 
@@ -171,35 +174,60 @@ def pmquery(request):
     kwargs ={}
     pmname= request.GET.get('pmname')
     ip = request.GET.get('ip')
-    ilo_ip = request.GET.get('ilo_ip')
-    cluster = request.GET.get('cluster')
+    type = request.GET.get('type')
+    role = request.GET.get('role')
     os = request.GET.get('os')
     if pmname != '':
-        kwargs['pmname__contains'] = pmname 
+        kwargs['pmname__icontains'] = pmname 
     if ip != '':
         kwargs['ip__contains'] = ip 
-    if ilo_ip != '':
-        kwargs['ilo_ip__contains'] = ilo_ip 
-    if cluster !='':
-        try:
-            tmpobject=Cluster.objects.get(clustername=cluster)
-        except Cluster.DoesNotExist:
-            tmpobject={}
-        if tmpobject != {}:
-            cluster_id=tmpobject.id
-            kwargs['cluster_id'] = cluster_id
+    if role != '':
+        kwargs['role'] = role 
+    if type !='':
+            kwargs['type__icontains'] = type
     if os !='':
         kwargs['os__contains'] = os
 
     mList = Pm.objects.filter(**kwargs)
-    print kwargs
+    form=PmQueryForm()
 
     #分页功能
     lst = SelfPaginator(request,mList, 20)
 
     kwvars = {
         'lPage':lst,
+        'form':form,
         'request':request,
     }
 
     return render_to_response('ProjectManage/pmlist.html',kwvars,RequestContext(request))
+
+@login_required
+@PermissionVerify()
+def pmexport(request):
+    '''物理机信息导出'''
+    kwargs ={}
+    pmname= request.GET.get('pmname')
+    ip = request.GET.get('ip')
+    type = request.GET.get('type')
+    role = request.GET.get('role')
+    os = request.GET.get('os')
+    if pmname != '':
+        kwargs['pmname__icontains'] = pmname 
+    if ip != '':
+        kwargs['ip__contains'] = ip 
+    if role != '':
+        kwargs['role'] = role 
+    if type !='':
+            kwargs['type__icontains'] = type
+    if os !='':
+        kwargs['os__contains'] = os
+    fnstr=u'pm'
+    if kwargs =={}:
+        objs=Pm.objects.all()
+    else:
+        for k in kwargs:
+            fnstr=fnstr+'_'+kwargs[k]
+        objs = Pm.objects.filter(**kwargs)
+    fn=fnstr+'.xls'
+    return daochupm(objs,fn)

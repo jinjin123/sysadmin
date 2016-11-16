@@ -67,7 +67,7 @@ OS_CHOICES = (('','---------'),
                ('RHEL6.6', 'RHEL6.8'),
                ('RHEL6.7', 'RHEL6.7'),
                ('RHEL6.8', 'RHEL6.8'),
-               ('RHEL5.4', 'RHEL65.4'),
+               ('RHEL5.4', 'RHEL5.4'),
                ('ESXI5.5', 'ESXI5.5'),
                ('ESXI6.0', 'ESXI6.0'),
                ('other', 'other')
@@ -146,6 +146,34 @@ class ProjectForm(forms.ModelForm):
         self.fields['remark'].label=u'备注'
         self.fields['remark'].widget.attrs={'class':'form-control'}
 
+class ProjectQueryForm(forms.ModelForm):
+    class Meta:
+        model = Project
+        fields = ('env','shortname','projectname','createuser','batch')
+        widgets = {
+            'env' : forms.Select(),
+            'shortname' : forms.TextInput(),
+            'projectname' : forms.TextInput(),
+            'createuser' : forms.Select(),
+            'batch' : forms.Select()
+        }
+
+    def __init__(self,*args,**kwargs):
+        super(ProjectQueryForm,self).__init__(*args,**kwargs)
+        self.fields['env'].label=u'环境'
+        self.fields['env'].widget.choices=ENV_CHOICES
+        self.fields['env'].widget.attrs={'class':'form-control'}
+        self.fields['shortname'].label=u'简称'
+        self.fields['shortname'].widget.attrs={'class':'form-control'}
+        self.fields['projectname'].label=u'名称'
+        self.fields['projectname'].widget.attrs={'class':'form-control'}
+        self.fields['createuser'].label=u'搭建人员'
+        self.fields['createuser'].widget.attrs={'class':'form-control'}
+        self.fields['batch'].label=u'批次'
+        self.fields['batch'].widget.attrs={'class':'form-control'}
+        self.fields['batch'].widget.choices=BATCH_CHOICES
+
+
 class VmForm(forms.ModelForm):
     class Meta:
         model = Vm
@@ -220,6 +248,33 @@ class VmForm(forms.ModelForm):
         self.fields['admin'].widget.attrs={'class':'form-control'}
         self.fields['appuser'].label=u'应用用户'
         self.fields['appuser'].widget.attrs={'class':'form-control'}
+
+class VmQueryForm(forms.ModelForm):
+    class Meta:
+        model = Vm
+        fields = ('vmname','project','role','os','ip')
+        widgets = {
+            'vmname' : forms.TextInput(),
+            'project' : forms.Select(),
+            'role' : forms.Select(),
+            'os' : forms.Select(),
+            'ip' : forms.TextInput(),
+        }
+
+    def __init__(self,*args,**kwargs):
+        super(VmQueryForm,self).__init__(*args,**kwargs)
+        self.fields['vmname'].label=u'名称'
+        self.fields['vmname'].widget.attrs={'class':'form-control'}
+        self.fields['project'].label=u'所属项目'
+        self.fields['project'].widget.attrs={'class':'form-control'}
+        self.fields['role'].label=u'功能'
+        self.fields['role'].widget.attrs={'class':'form-control'}
+        self.fields['role'].widget.choices=VMROLE_CHOICES
+        self.fields['os'].label=u'系统'
+        self.fields['os'].widget.attrs={'class':'form-control'}
+        self.fields['os'].widget.choices=OS_CHOICES
+        self.fields['ip'].label=u'IP地址'
+        self.fields['ip'].widget.attrs={'class':'form-control'}
 
 class ClusterForm(forms.ModelForm):
     class Meta:
@@ -355,5 +410,32 @@ class PmForm(forms.ModelForm):
         self.fields['os'].widget.choices=OS_CHOICES
         self.fields['mask'].widget.choices=MASK_CHOICES
         self.fields['position'].widget.choices=POSITION_CHOICES
+        self.fields['role'].widget.choices=ROLE_CHOICES
+
+class PmQueryForm(forms.ModelForm):
+    class Meta:
+        model = Pm
+        fields = ('role','pmname','type','os','ip')
+        widgets = {
+            'role' : forms.Select(),
+            'pmname' : forms.TextInput(),
+            'ip' : forms.TextInput(),
+            'type' : forms.TextInput(),
+            'os' : forms.Select(),
+        }
+
+    def __init__(self,*args,**kwargs):
+        super(PmQueryForm,self).__init__(*args,**kwargs)
+        self.fields['pmname'].label=u'主机名'
+        self.fields['os'].label=u'系统'
+        self.fields['ip'].label=u'IP'
+        self.fields['type'].label=u'设备类型'
+        self.fields['role'].label=u'功能'
+        self.fields['pmname'].widget.attrs={'class':'form-control'}
+        self.fields['os'].widget.attrs={'class':'form-control'}
+        self.fields['ip'].widget.attrs={'class':'form-control'}
+        self.fields['type'].widget.attrs={'class':'form-control'}
+        self.fields['role'].widget.attrs={'class':'form-control'}
+        self.fields['os'].widget.choices=OS_CHOICES
         self.fields['role'].widget.choices=ROLE_CHOICES
 

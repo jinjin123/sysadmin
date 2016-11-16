@@ -8,10 +8,11 @@ from django.http import HttpResponse,HttpResponseRedirect
 from django.shortcuts import render_to_response,RequestContext
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
-from ProjectManage.forms import VmForm
+from ProjectManage.forms import VmForm,VmQueryForm
 from ProjectManage.models import Vm,Project,Cluster,Pm
 from website.common.CommonPaginator import SelfPaginator
 from UserManage.views.permission import PermissionVerify
+from website.common.export import daochuvm
 
 @PermissionVerify()
 @login_required
@@ -54,6 +55,7 @@ def vminput(request):
 @PermissionVerify()
 @login_required
 def vmlist(request):
+    form = VmQueryForm()
     mList = Vm.objects.all()
 
     #分页功能
@@ -61,6 +63,7 @@ def vmlist(request):
 
     kwvars = {
         'lPage':lst,
+        'form':form,  
         'request':request,
     }
 
@@ -135,7 +138,7 @@ def vmquery(request):
     role = request.GET.get('role')
     os = request.GET.get('os')
     if vmname != '':
-        kwargs['vmname__contains'] = vmname 
+        kwargs['vmname__icontains'] = vmname 
     if ip != '':
         kwargs['ip__contains'] = ip 
     if role != '':
@@ -143,22 +146,48 @@ def vmquery(request):
     if os != '':
         kwargs['os__contains'] = os 
     if project !='':
-        try:
-            tmpobject=Project.objects.get(projectname=project)
-        except Project.DoesNotExist:
-            tmpobject1={}
-        if tmpobject !={}:
-            project_id=tmpobject.id
-            kwargs['project_id'] = project_id
+            kwargs['project_id'] = project
     mList = Vm.objects.filter(**kwargs)
     print kwargs
 
     #分页功能
     lst = SelfPaginator(request,mList, 20)
+    form=VmQueryForm()
 
     kwvars = {
         'lPage':lst,
+        'form':form,  
         'request':request,
     }
 
     return render_to_response('ProjectManage/vmlist.html',kwvars,RequestContext(request))
+
+@login_required
+@PermissionVerify()
+def vmexport(request):
+    '''虚拟机信息导出'''
+    kwargs ={}
+    vmname = request.GET.get('vmname')
+    project = request.GET.get('project')
+    ip = request.GET.get('ip')
+    role = request.GET.get('role')
+    os = request.GET.get('os')
+    if vmname != '':
+        kwargs['vmname__icontains'] = vmname 
+    if ip != '':
+        kwargs['ip__contains'] = ip 
+    if role != '':
+        kwargs['role__contains'] = role
+    if os != '':
+        kwargs['os__contains'] = os 
+    if project !='':
+            kwargs['project_id'] = project
+    fnstr=u'vm'
+    if kwargs =={}:
+        objs=Vm.objects.all()
+    else:
+        for k in kwargs:
+            fnstr=fnstr+'_'+kwargs[k]
+        objs = Vm.objects.filter(**kwargs)
+    fn=fnstr+'.xls'
+    return daochuvm(objs,fn)

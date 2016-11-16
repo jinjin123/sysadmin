@@ -16,7 +16,7 @@ class Project(models.Model):
     batch=models.CharField(max_length=10,blank=True,null=True,verbose_name=u'项目批次')
     remark=models.CharField(max_length=200,blank=True,null=True,verbose_name=u'备注')
     def __unicode__(self):
-        return self.projectname
+        return '%s.%s' %(self.id,self.projectname)
     class Meta:
         db_table = 'project'
         ordering = ['-id']

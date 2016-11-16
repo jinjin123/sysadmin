@@ -8,7 +8,7 @@ from django.http import HttpResponse,HttpResponseRedirect
 from django.shortcuts import render_to_response,RequestContext
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
-from ProjectManage.forms import ProjectForm
+from ProjectManage.forms import ProjectForm,ProjectQueryForm
 from ProjectManage.models import Project,Vm
 from UserManage.models import User
 from website.common.CommonPaginator import SelfPaginator
@@ -36,6 +36,7 @@ def projectinput(request):
 @PermissionVerify()
 @login_required
 def projectlist(request):
+    form = ProjectQueryForm()
     mList = Project.objects.all()
 
     #分页功能
@@ -43,6 +44,7 @@ def projectlist(request):
 
     kwvars = {
         'lPage':lst,
+        'form':form,
         'request':request,
     }
 
@@ -114,13 +116,7 @@ def projectquery(request):
     if batch != '':
         kwargs['batch__contains'] = batch
     if createuser !='':
-        try:
-            tmpobject=User.objects.get(username=createuser)
-        except User.DoesNotExist:
-            tmpobject={}
-        if tmpobject !={}:
-            createuser_id=tmpobject.id
-            kwargs['createuser_id'] = createuser_id 
+            kwargs['createuser_id'] = createuser 
     
 
     mList = Project.objects.filter(**kwargs)
@@ -128,10 +124,12 @@ def projectquery(request):
 
     #分页功能
     lst = SelfPaginator(request,mList, 20)
-
+   
+    form = ProjectQueryForm()
     kwvars = {
         'lPage':lst,
         'request':request,
+        'form':form,
     }
 
     return render_to_response('ProjectManage/projectlist.html',kwvars,RequestContext(request))
