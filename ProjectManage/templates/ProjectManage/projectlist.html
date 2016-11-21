@@ -16,8 +16,7 @@
     </div>
 
     <hr/>
-    <form class="form-inline" id="projectqueryForm" role="form" action={% url "projectquery" %} method="GET">
-        <!--
+    <form class="form-inline" id="projectqueryForm" role="form" action="" method="GET">
   	<div class="form-group">
             <label class="sr-only" for="env">环境</label>
             <input type="text" class="form-control" id="env" name="env" placeholder="环境">
@@ -38,14 +37,9 @@
         <div class="form-group">
             <label class="sr-only" for="createuser">搭建人员</label>
             <input type="text" class="form-control" id="createuser" name="createuser" placeholder="搭建人员">
-       </div>-->
-        {% for item in form %}
-            <div class="form-group">
-                <label  class="control-label">{{item.label}}</label>
-                    {{item}}
-            </div>
-        {% endfor %}
-       <button type="submit" class="btn btn-default">查询</button>
+       </div>
+       <button type="button" class="btn btn-default" onclick="is_submit(1)">查询</button>
+       <button type="button" class="btn btn-primary" onclick="is_submit(2)">导出项目</button>
     </form>
 
     <hr/>
@@ -83,4 +77,19 @@
         </table>
 
     {% include "common/paginator.html" %}
+<script>
+   function is_submit(value){
+      var form=$("#projectqueryForm") 
+      if (value==1){
+         form.action="/project/project/query/";
+         form.attr("action",form.action);
+         form.submit();
+      }  
+      if (value==2){
+         form.action="/project/project/export/";
+         form.attr("action",form.action);
+         form.submit();
+      }  
+   }
+</script>
 {% endblock %}

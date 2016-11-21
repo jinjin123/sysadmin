@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response, RequestContext
 from django.contrib.auth.decorators import login_required
-from ProjectManage.forms import PmForm, PmQueryForm
+from ProjectManage.forms import PmForm
 from ProjectManage.models import Pm, Cluster
 from ResourceManage.models import StorageGroup, VlanGroup
 from website.common.CommonPaginator import SelfPaginator
@@ -52,13 +52,11 @@ def pminput(request):
 @login_required
 def pmlist(request):
     """物理机展示"""
-    form = PmQueryForm()
     mlist = Pm.objects.all()
     # 分页功能
     lst = SelfPaginator(request, mlist, 20)
     kwvars = {
         'lPage': lst,
-        'form': form,
         'request': request,
     }
     return render_to_response('ProjectManage/pmlist.html', kwvars, RequestContext(request))
@@ -173,18 +171,16 @@ def pmquery(request):
     if ip != '':
         kwargs['ip__contains'] = ip
     if role != '':
-        kwargs['role'] = role
+        kwargs['role__icontains'] = role
     if type != '':
             kwargs['type__icontains'] = type
     if os != '':
-        kwargs['os__contains'] = os
+        kwargs['os__icontains'] = os
     mlist = Pm.objects.filter(**kwargs)
-    form = PmQueryForm()
     # 分页功能
     lst = SelfPaginator(request, mlist, 20)
     kwvars = {
         'lPage': lst,
-        'form': form,
         'request': request,
     }
     return render_to_response('ProjectManage/pmlist.html', kwvars, RequestContext(request))
@@ -205,11 +201,11 @@ def pmexport(request):
     if ip != '':
         kwargs['ip__contains'] = ip
     if role != '':
-        kwargs['role'] = role
+        kwargs['role__icontains'] = role
     if type != '':
             kwargs['type__icontains'] = type
     if os != '':
-        kwargs['os__contains'] = os
+        kwargs['os__icontains'] = os
     fnstr = u'pm'
     if kwargs == {}:
         objs = Pm.objects.all()

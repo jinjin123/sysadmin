@@ -5,7 +5,7 @@ from django import forms
 from ProjectManage.models import Project, Vm, Cluster, Pm
 # from ResourceManage.models import Software,Domain
 # 环境选项
-ENV_CHOICES = (('', '---------'),
+ENV_CHOICES = (('', '请选择项目环境'),
                ('T1', 'T1'),
                ('T2', 'T2'),
                ('T3', 'T3'),
@@ -49,7 +49,7 @@ TYPE_CHOICES = (('', '---------'),
                 ('其他', '其他')
                 )
 # 批次选项
-BATCH_CHOICES = (('', '---------'),
+BATCH_CHOICES = (('', '请选择项目批次'),
                  ('X601', 'X601'),
                  ('P604', 'P604'),
                  ('P605', 'P605'),
@@ -59,7 +59,7 @@ BATCH_CHOICES = (('', '---------'),
                  )
 
 # 操作系统选项
-OS_CHOICES = (('', '---------'),
+OS_CHOICES = (('', '请选择操作系统'),
               ('WINDOW SERVER 2003', 'WINDOW SERVER 2003'),
               ('WINDOW SERVER 2008', 'WINDOW SERVER 2008'),
               ('WINDOW SERVER 2008R2', 'WINDOW SERVER 2008R2'),
@@ -83,14 +83,14 @@ POSITION_CHOICES = (('', '---------'),
                     )
 
 # 物理机角色选项
-ROLE_CHOICES = (('', '---------'),
+ROLE_CHOICES = (('', '请选择物理机角色'),
                 ('物理单机', '物理单机'),
                 ('物理集群宿主机', '物理集群宿主机'),
                 ('物理单机宿主机', '物理单机宿主机')
                 )
 
 # 虚拟机角色选项
-VMROLE_CHOICES = (('', '---------'),
+VMROLE_CHOICES = (('', '请选择虚拟机角色'),
                   ('WEB服务器', 'WEB服务器'),
                   ('数据库服务器', '数据库服务器'),
                   ('应用服务器', '应用服务器'),
@@ -149,7 +149,7 @@ class ProjectForm(forms.ModelForm):
         self.fields['remark'].label = u'备注'
         self.fields['remark'].widget.attrs = {'class': 'form-control'}
 
-
+'''
 class ProjectQueryForm(forms.ModelForm):
     class Meta:
         model = Project
@@ -166,17 +166,17 @@ class ProjectQueryForm(forms.ModelForm):
         super(ProjectQueryForm, self).__init__(*args, **kwargs)
         self.fields['env'].label = u'环境'
         self.fields['env'].widget.choices = ENV_CHOICES
-        self.fields['env'].widget.attrs = {'class': 'form-control'}
+        self.fields['env'].widget.attrs = {'class': 'form-control', 'placeholder': '请选择项目环境'}
         self.fields['shortname'].label = u'简称'
-        self.fields['shortname'].widget.attrs = {'class': 'form-control'}
+        self.fields['shortname'].widget.attrs = {'class': 'form-control', 'placeholder': '项目简称'}
         self.fields['projectname'].label = u'名称'
-        self.fields['projectname'].widget.attrs = {'class': 'form-control'}
+        self.fields['projectname'].widget.attrs = {'class': 'form-control', 'placeholder': '项目名称'}
         self.fields['createuser'].label = u'搭建人员'
-        self.fields['createuser'].widget.attrs = {'class': 'form-control'}
+        self.fields['createuser'].widget.attrs = {'class': 'form-control', 'placeholder': '搭建人员'}
         self.fields['batch'].label = u'批次'
-        self.fields['batch'].widget.attrs = {'class': 'form-control'}
+        self.fields['batch'].widget.attrs = {'class': 'form-control', 'placeholder': '项目批次'}
         self.fields['batch'].widget.choices = BATCH_CHOICES
-
+'''
 
 class VmForm(forms.ModelForm):
     class Meta:
@@ -245,7 +245,7 @@ class VmForm(forms.ModelForm):
         self.fields['appuser'].label = u'应用用户'
         self.fields['appuser'].widget.attrs = {'class': 'form-control'}
 
-
+'''
 class VmQueryForm(forms.ModelForm):
     class Meta:
         model = Vm
@@ -261,18 +261,18 @@ class VmQueryForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(VmQueryForm, self).__init__(*args, **kwargs)
         self.fields['vmname'].label = u'名称'
-        self.fields['vmname'].widget.attrs = {'class': 'form-control'}
+        self.fields['vmname'].widget.attrs = {'class': 'form-control', 'placeholder': '虚拟机名称'}
         self.fields['project'].label = u'所属项目'
-        self.fields['project'].widget.attrs = {'class': 'form-control'}
+        self.fields['project'].widget.attrs = {'class': 'form-control', 'placeholder': '所属项目'}
         self.fields['role'].label = u'功能'
-        self.fields['role'].widget.attrs = {'class': 'form-control'}
+        self.fields['role'].widget.attrs = {'class': 'form-control', 'placeholder': '功能' }
         self.fields['role'].widget.choices = VMROLE_CHOICES
         self.fields['os'].label = u'系统'
-        self.fields['os'].widget.attrs = {'class': 'form-control'}
+        self.fields['os'].widget.attrs = {'class': 'form-control', 'placeholder': '操作系统'}
         self.fields['os'].widget.choices = OS_CHOICES
-        self.fields['ip'].label = u'IP地址'
-        self.fields['ip'].widget.attrs = {'class': 'form-control'}
-
+        self.fields['ip'].label = u'IP'
+        self.fields['ip'].widget.attrs = {'class': 'form-control', 'placeholder': '虚拟机IP'}
+'''
 
 class ClusterForm(forms.ModelForm):
     class Meta:
@@ -411,7 +411,7 @@ class PmForm(forms.ModelForm):
         self.fields['position'].widget.choices = POSITION_CHOICES
         self.fields['role'].widget.choices = ROLE_CHOICES
 
-
+'''
 class PmQueryForm(forms.ModelForm):
     class Meta:
         model = Pm
@@ -431,11 +431,11 @@ class PmQueryForm(forms.ModelForm):
         self.fields['ip'].label = u'IP'
         self.fields['type'].label = u'设备类型'
         self.fields['role'].label = u'功能'
-        self.fields['pmname'].widget.attrs = {'class': 'form-control'}
-        self.fields['os'].widget.attrs = {'class': 'form-control'}
-        self.fields['ip'].widget.attrs = {'class': 'form-control'}
-        self.fields['type'].widget.attrs = {'class': 'form-control'}
-        self.fields['role'].widget.attrs = {'class': 'form-control'}
+        self.fields['pmname'].widget.attrs = {'class': 'form-control', 'placeholder': '物理机名称'}
+        self.fields['os'].widget.attrs = {'class': 'form-control', 'placeholder': '操作系统'}
+        self.fields['ip'].widget.attrs = {'class': 'form-control', 'placeholder': 'IP地址'}
+        self.fields['type'].widget.attrs = {'class': 'form-control', 'placeholder': '物理机类型'}
+        self.fields['role'].widget.attrs = {'class': 'form-control', 'placeholder': '服务器功能'}
         self.fields['os'].widget.choices = OS_CHOICES
         self.fields['role'].widget.choices = ROLE_CHOICES
-
+'''

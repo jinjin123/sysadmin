@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
 from ResourceManage.models import Vlan, VlanGroup
 from ProjectManage.models import Vm, Cluster, Pm
 from django.contrib.auth.decorators import login_required
@@ -23,11 +24,12 @@ def getip(request):
         ipcount = int(request.GET['ipcount'])
 
         # 定义网段类型中所有ip地址列表
-        listone = []
+        list1 = []
         # 定义已使用ip地址列表
-        listtwo = []
-
+        list2 = []
         # 定义网段类型中可用ip地址列表
+        # list3 = []
+   
         if ID != '':
             vlangroup_id = Cluster.objects.get(id=int(ID)).vlangroup_id
         if PID != '':
@@ -40,38 +42,38 @@ def getip(request):
             thestartip = obj.startip
             theendip = obj.endip
             for j in range(thestartip, theendip+1):
-                ip = suffix_ip + '.'+str(j)
-                listone.append(ip)
+                ip = suffix_ip + '.'+ str(j)
+                list1.append(ip)
         ips = Vm.objects.values("ip")
         for i in ips:
             ip1 = i['ip']
-            listtwo.append(ip1)
-        set1 = set(listone)
-        set2 = set(listtwo)
+            list2.append(ip1)
+        set1 = set(list1)
+        set2 = set(list2)
         set3 = set1-set2
-        listthree = list(set(set3))
-        iplist = sort_ip_list(listthree)
-        rdict = {}
+        list3 = list(set(set3))
+        iplist = sort_ip_list(list3)
+        resultdict = {}
         ip_tmp = iplist[0].split('.')
         ip_suffix = ip_tmp[0]+'.'+ip_tmp[1]+'.'+ip_tmp[2]
-        gateway = Vlan.objects.get(vlanname__cntains=ip_suffix).gateway
+        gateway = Vlan.objects.get(vlanname__contains=ip_suffix).gateway
         mask = Vlan.objects.get(vlanname__contains=ip_suffix).mask
         if ipcount == 1:
-            rdict['ip'] = iplist[0]
-            rdict['mask'] = mask
-            rdict['gateway'] = gateway
+            resultdict['ip'] = iplist[0]
+            resultdict['mask'] = mask
+            resultdict['gateway'] = gateway
         elif ipcount == 2:
-            rdict['ip'] = iplist[0]
-            rdict['vip'] = iplist[1]
-            rdict['mask'] = mask
-            rdict['gateway'] = gateway
+            resultdict['ip'] = iplist[0]
+            resultdict['vip'] = iplist[1]
+            resultdict['mask'] = mask
+            resultdict['gateway'] = gateway
         elif ipcount == 3:
-            rdict['ip'] = iplist[0]
-            rdict['vip'] = iplist[1]
-            rdict['scanip'] = iplist[2]
-            rdict['mask'] = mask
-            rdict['gateway'] = gateway
+            resultdict['ip'] = iplist[0]
+            resultdict['vip'] = iplist[1]
+            resultdict['scanip'] = iplist[2]
+            resultdict['mask'] = mask
+            resultdict['gateway'] = gateway
         else:
             pass
         # return HttpResponse(json.dumps(resultdict),content_type='application/json')
-        return JsonResponse(rdict)
+        return JsonResponse(resultdict)

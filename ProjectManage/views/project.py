@@ -7,10 +7,11 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response, RequestContext
 from django.contrib.auth.decorators import login_required
-from ProjectManage.forms import ProjectForm, ProjectQueryForm
+from ProjectManage.forms import ProjectForm
 from ProjectManage.models import Project
 from website.common.CommonPaginator import SelfPaginator
 from UserManage.views.permission import PermissionVerify
+from website.common.export import daochuproject
 
 
 @PermissionVerify()
@@ -35,13 +36,11 @@ def projectinput(request):
 @login_required
 def projectlist(request):
     """项目展示"""
-    form = ProjectQueryForm()
     mlist = Project.objects.all()
     # 分页功能
     lst = SelfPaginator(request, mlist, 20)
     kwvars = {
         'lPage': lst,
-        'form': form,
         'request': request,
     }
     return render_to_response('ProjectManage/projectlist.html', kwvars, RequestContext(request))
@@ -101,22 +100,50 @@ def projectquery(request):
     batch = request.GET.get('batch')
     createuser = request.GET.get('createuser')
     if env != '':
-        kwargs['env__contains'] = env 
+        kwargs['env__icontains'] = env 
     if shortname != '':
-        kwargs['shortname__contains'] = shortname 
+        kwargs['shortname__icontains'] = shortname 
     if projectname != '':
-        kwargs['projectname__contains'] = projectname 
+        kwargs['projectname__icontains'] = projectname 
     if batch != '':
-        kwargs['batch__contains'] = batch
+        kwargs['batch__icontains'] = batch
     if createuser != '':
-            kwargs['createuser_id'] = createuser
+            kwargs['createuser__nickname__icontains'] = createuser
     mlist = Project.objects.filter(**kwargs)
     # 分页功能
     lst = SelfPaginator(request, mlist, 20)
-    form = ProjectQueryForm()
     kwvars = {
         'lPage': lst,
         'request': request,
-        'form': form,
     }
     return render_to_response('ProjectManage/projectlist.html', kwvars, RequestContext(request))
+
+@login_required
+@PermissionVerify()
+def projectexport(request):
+    """项目信息导出"""
+    kwargs = {}
+    env = request.GET.get('env')
+    shortname = request.GET.get('shortname')
+    projectname = request.GET.get('projectname')
+    batch = request.GET.get('batch')
+    createuser = request.GET.get('createuser')
+    if env != '':
+        kwargs['env__icontains'] = env 
+    if shortname != '':
+        kwargs['shortname__icontains'] = shortname 
+    if projectname != '':
+        kwargs['projectname__icontains'] = projectname 
+    if batch != '':
+        kwargs['batch__icontains'] = batch
+    if createuser != '':
+            kwargs['createuser__nickname__icontains'] = createuser
+    fnstr = u'project'
+    if kwargs == {}:
+        objs = Project.objects.all()
+    else:
+        for k in kwargs:
+            fnstr = fnstr+'_'+kwargs[k]
+        objs = Project.objects.filter(**kwargs)
+    fn = fnstr+'.xls'
+    return daochuproject(objs, fn)

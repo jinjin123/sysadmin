@@ -7,7 +7,6 @@ from django.shortcuts import render_to_response
 from django.shortcuts import RequestContext
 from django.contrib.auth.decorators import login_required
 from ProjectManage.forms import VmForm
-from ProjectManage.forms import VmQueryForm
 from ProjectManage.models import Vm
 from ProjectManage.models import Project
 from ProjectManage.models import Pm
@@ -42,13 +41,11 @@ def vminput(request):
 @login_required
 def vmlist(request):
     """虚拟机展示"""
-    form = VmQueryForm()
     mlist = Vm.objects.all()
     # 分页功能
     lst = SelfPaginator(request, mlist, 20)
     kwvars = {
         'lPage': lst,
-        'form': form,
         'request': request,
     }
     return render_to_response('ProjectManage/vmlist.html', kwvars, RequestContext(request))
@@ -123,18 +120,17 @@ def vmquery(request):
     if ip != '':
         kwargs['ip__contains'] = ip 
     if role != '':
-        kwargs['role__contains'] = role
+        kwargs['role__icontains'] = role
     if os != '':
-        kwargs['os__contains'] = os 
+        kwargs['os__icontains'] = os 
     if project != '':
-            kwargs['project_id'] = project
+            kwargs['project__projectname__icontains'] = project
+    print kwargs
     mlist = Vm.objects.filter(**kwargs)
     # 分页功能
     lst = SelfPaginator(request, mlist, 20)
-    form = VmQueryForm()
     kwvars = {
         'lPage': lst,
-        'form': form,
         'request': request,
     }
     return render_to_response('ProjectManage/vmlist.html', kwvars, RequestContext(request))
@@ -155,11 +151,11 @@ def vmexport(request):
     if ip != '':
         kwargs['ip__contains'] = ip 
     if role != '':
-        kwargs['role__contains'] = role
+        kwargs['role__icontains'] = role
     if os != '':
-        kwargs['os__contains'] = os 
+        kwargs['os__icontains'] = os 
     if project != '':
-            kwargs['project_id'] = project
+            kwargs['project__projectname__icontains'] = project
     fnstr = u'vm'
     if kwargs == {}:
         objs = Vm.objects.all()

@@ -17,7 +17,7 @@
 
     <hr/>
     <form class="form-inline" id="vmqueryForm" role="form" action=""  method="GET">
-        <!--
+        
         <div class="form-group">
             <label class="sr-only" for="vmname">虚拟机名称</label>
             <input type="text" class="form-control" id="vmname" name="vmname" placeholder="虚拟机名称">
@@ -37,13 +37,8 @@
         <div class="form-group">
             <label class="sr-only" for="os">操作系统</label>
             <input type="text" class="form-control" id="os" name="os" placeholder="操作系统">
-       </div>-->
-       {% for item in form %}
-            <div class="form-group">
-                <label  class="control-label">{{item.label}}</label>
-                    {{item}}
-            </div>
-        {% endfor %}
+       </div>
+
        <button type="button" class="btn btn-default" onclick="is_submit(1)">查询</button>
        <button type="button" class="btn btn-primary" onclick="is_submit(2)">导出虚拟机</button>
 </form>

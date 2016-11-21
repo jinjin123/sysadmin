@@ -17,7 +17,7 @@
 
     <hr/>
     <form class="form-inline" id="pmqueryForm" role="form" action="" method="GET">
-        <!--<div class="form-group">
+        <div class="form-group">
             <label class="sr-only" for="pmname">物理机名称</label>
             <input type="text" class="form-control" id="pmname" name="pmname" placeholder="物理机名称">
         </div>
@@ -30,19 +30,13 @@
             <input type="text" class="form-control" id="ip"  name="ip" placeholder="ip地址">
        </div>
         <div class="form-group">
-            <label class="sr-only" for="ilo_ip">管理地址</label>
-            <input type="text" class="form-control" id="ilo_ip"  name="ilo_ip" placeholder="ILO管理地址">
+            <label class="sr-only" for="type">管理地址</label>
+            <input type="text" class="form-control" id="type"  name="type" placeholder="设备类型">
        </div>
         <div class="form-group">
-            <label class="sr-only" for="cluster">集群名称</label>
-            <input type="text" class="form-control" id="cluster" name="cluster" placeholder="集群名称">
-       </div>-->
-       {% for item in form %}
-            <div class="form-group">
-                <label  class="control-label">{{item.label}}</label>
-                    {{item}}
-            </div>
-        {% endfor %}
+            <label class="sr-only" for="cluster">物理机角色</label>
+            <input type="text" class="form-control" id="role" name="role" placeholder="物理机角色">
+       </div>
        <button type="submit" class="btn btn-default" onclick="is_submit(1)">查询</button>
        <button type="submit" class="btn btn-primary" onclick="is_submit(2)">导出物理机</button>
 </form>
