@@ -77,6 +77,7 @@
                         <a class="btn btn-warning btn-xs"  href={% url "vmedit" i.id %} onclick="return confirm('是否确认编辑？')">编辑</a>
                         <a class="btn btn-danger btn-xs" href={% url "vmdelete" i.id %} onclick="return confirm('是否确认删除？')">删除</a>
                         <a class="btn btn-primary btn-xs" href={% url "vmrepl" i.id %} onclick="return confirm('是否确认复制？')">复制</a>
+                        <a class="btn btn-info btn-xs" " href={% url "vmupdate" i.id  %}>刷新</a>
                     </td>
                 </tr>
             {% endfor %}
@@ -88,15 +89,19 @@
    function is_submit(value){
       var form=$("#vmqueryForm") 
       if (value==1){
-         form.action="/project/vm/query/";
+         form.action="{% url 'vmquery' %}";
          form.attr("action",form.action);
          form.submit();
       }  
       if (value==2){
-         form.action="/project/vm/export/";
+         form.action="{% url 'vmexport' %}";
          form.attr("action",form.action);
          form.submit();
       }  
    }
+
+
 </script>
+
+
 {% endblock %}

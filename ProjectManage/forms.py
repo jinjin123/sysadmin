@@ -5,7 +5,7 @@ from django import forms
 from ProjectManage.models import Project, Vm, Cluster, Pm
 # from ResourceManage.models import Software,Domain
 # 环境选项
-ENV_CHOICES = (('', '请选择项目环境'),
+ENV_CHOICES = (('', '---------'),
                ('T1', 'T1'),
                ('T2', 'T2'),
                ('T3', 'T3'),
@@ -49,7 +49,7 @@ TYPE_CHOICES = (('', '---------'),
                 ('其他', '其他')
                 )
 # 批次选项
-BATCH_CHOICES = (('', '请选择项目批次'),
+BATCH_CHOICES = (('', '---------'),
                  ('X601', 'X601'),
                  ('P604', 'P604'),
                  ('P605', 'P605'),
@@ -59,7 +59,7 @@ BATCH_CHOICES = (('', '请选择项目批次'),
                  )
 
 # 操作系统选项
-OS_CHOICES = (('', '请选择操作系统'),
+OS_CHOICES = (('', '---------'),
               ('WINDOW SERVER 2003', 'WINDOW SERVER 2003'),
               ('WINDOW SERVER 2008', 'WINDOW SERVER 2008'),
               ('WINDOW SERVER 2008R2', 'WINDOW SERVER 2008R2'),
@@ -83,14 +83,14 @@ POSITION_CHOICES = (('', '---------'),
                     )
 
 # 物理机角色选项
-ROLE_CHOICES = (('', '请选择物理机角色'),
+ROLE_CHOICES = (('', '---------'),
                 ('物理单机', '物理单机'),
                 ('物理集群宿主机', '物理集群宿主机'),
                 ('物理单机宿主机', '物理单机宿主机')
                 )
 
 # 虚拟机角色选项
-VMROLE_CHOICES = (('', '请选择虚拟机角色'),
+VMROLE_CHOICES = (('', '---------'),
                   ('WEB服务器', 'WEB服务器'),
                   ('数据库服务器', '数据库服务器'),
                   ('应用服务器', '应用服务器'),

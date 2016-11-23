@@ -3,6 +3,7 @@
 # from django.shortcuts import render
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
+from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.shortcuts import RequestContext
 from django.contrib.auth.decorators import login_required
@@ -13,6 +14,8 @@ from ProjectManage.models import Pm
 from website.common.CommonPaginator import SelfPaginator
 from UserManage.views.permission import PermissionVerify
 from website.common.export import daochuvm
+from ProjectManage.views.getinfo import get_info
+import json
 
 
 @PermissionVerify()
@@ -165,3 +168,23 @@ def vmexport(request):
         objs = Vm.objects.filter(**kwargs)
     fn = fnstr+'.xls'
     return daochuvm(objs, fn)
+
+
+
+@login_required
+@PermissionVerify()
+def vmupdate(request,ID):
+    """虚拟机信息更新"""
+    server = Vm.objects.get(id=ID)
+    data = get_info(server.ip)
+    server.vmname = data['hostname']
+    server.cpu = data['cpu_count']
+    server.mem = data['mem']
+    server.save()
+    return HttpResponseRedirect(reverse('vmlist'))
+
+
+
+
+
+
