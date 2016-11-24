@@ -97,7 +97,7 @@ class Vm(models.Model):
     batch = models.CharField(max_length=30, blank=True, null=True, verbose_name=u'虚拟机批次')
     env = models.CharField(max_length=30, blank=True, null=True, verbose_name=u'虚拟机环境')
     cluster = models.ForeignKey(Cluster, blank=True, null=True, verbose_name=u'所属集群', on_delete=models.SET_NULL)
-    os = models.CharField(max_length=30, verbose_name=u'虚拟机操作系统')
+    os = models.CharField(max_length=80, verbose_name=u'虚拟机操作系统')
     soft = models.ForeignKey(Software, blank=True, null=True, verbose_name=u'虚拟机安装软件', on_delete=models.SET_NULL)
     cpu = models.IntegerField(blank=True, null=True, verbose_name=u'虚拟机cpu核数')
     mem = models.IntegerField(blank=True, null=True, verbose_name=u'虚拟机内存大小')
@@ -108,6 +108,8 @@ class Vm(models.Model):
     domain = models.ForeignKey(Domain, blank=True, null=True, verbose_name=u'虚拟机所属域', on_delete=models.SET_NULL)
     admin = models.CharField(max_length=30, blank=True, null=True, verbose_name=u'虚拟机管理员')
     appuser = models.CharField(max_length=30, blank=True, null=True, verbose_name=u'虚拟机应用用户')
+    uptime = models.CharField(max_length=30, blank=True, null=True, verbose_name=u'虚拟机已启动时间')
+    vmstatus = models.BooleanField(default=False, verbose_name=u'虚拟机开机状态')
     remark = models.CharField(max_length=200, blank=True, null=True, verbose_name=u'备注')
 
     def __unicode__(self):

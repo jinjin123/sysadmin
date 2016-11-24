@@ -9,8 +9,8 @@ from ProjectManage.models import Vm,Pm,Cluster,Project
 import json
 @login_required
 def Home(request):
-    '''
     #建表
+    '''
     Tongji.objects.all().delete()
     typelist=["搭建项目","物理机总数","虚拟机总数","存储总数","集群总数","CPU总核数","内存总数","虚拟机已用CPU总核数","虚拟机已用内存总数","虚拟机已用存储总数","软件总数","单机宿主物理机","集群宿主物理机","物理单机","Linux虚拟机","Windows虚拟机","其他类型虚拟机"]
     for i in typelist:

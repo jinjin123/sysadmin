@@ -44,7 +44,7 @@ class Migration(migrations.Migration):
                 ('email', models.EmailField(max_length=255)),
                 ('is_active', models.BooleanField(default=False)),
                 ('is_superuser', models.BooleanField(default=False)),
-                ('nickname', models.CharField(max_length=64, null=True)),
+                ('nickname', models.CharField(max_length=64)),
                 ('sex', models.CharField(max_length=2, null=True)),
                 ('role', models.ForeignKey(blank=True, to='UserManage.RoleList', null=True)),
             ],

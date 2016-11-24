@@ -45,10 +45,10 @@ class Migration(migrations.Migration):
             name='Storage',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('storagename', models.CharField(unique=True, max_length=30, verbose_name='\u5b58\u50a8\u540d\u79f0', db_index=True)),
+                ('storagename', models.CharField(unique=True, max_length=100, verbose_name='\u5b58\u50a8\u540d\u79f0', db_index=True)),
                 ('storagesize', models.IntegerField(verbose_name='\u5b58\u50a8\u5927\u5c0f')),
-                ('storagetype', models.CharField(max_length=200, verbose_name='\u5b58\u50a8\u7c7b\u578b')),
-                ('raidtype', models.CharField(max_length=200, verbose_name='\u5b58\u50a8RAID\u7c7b\u578b')),
+                ('storagetype', models.CharField(max_length=30, verbose_name='\u5b58\u50a8\u7c7b\u578b')),
+                ('raidtype', models.CharField(max_length=30, verbose_name='\u5b58\u50a8RAID\u7c7b\u578b')),
                 ('remark', models.CharField(max_length=200, null=True, verbose_name='\u5907\u6ce8', blank=True)),
             ],
             options={
@@ -61,11 +61,28 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('storagegroupname', models.CharField(unique=True, max_length=30, verbose_name='\u5b58\u50a8\u7ec4\u540d\u79f0', db_index=True)),
+                ('ttstorage', models.IntegerField(default=0, verbose_name='\u5b58\u50a8\u7ec4\u5927\u5c0f', blank=True)),
+                ('systorage', models.IntegerField(default=0, verbose_name='\u5b58\u50a8\u7ec4\u5269\u4f59\u5927\u5c0f', blank=True)),
+                ('usedstorage', models.IntegerField(default=0, verbose_name='\u5b58\u50a8\u7ec4\u5df2\u7528\u5927\u5c0f', blank=True)),
+                ('is_selected', models.BooleanField(default=False, verbose_name='\u662f\u5426\u5df2\u7528')),
                 ('remark', models.CharField(max_length=200, null=True, verbose_name='\u5907\u6ce8', blank=True)),
             ],
             options={
                 'ordering': ['-id'],
                 'db_table': 'storagegroup',
+            },
+        ),
+        migrations.CreateModel(
+            name='Tongji',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('tongjitype', models.CharField(unique=True, max_length=50, verbose_name='\u7edf\u8ba1\u7c7b\u578b', db_index=True)),
+                ('count', models.IntegerField(null=True, verbose_name='\u7edf\u8ba1\u7c7b\u578b', blank=True)),
+                ('remark', models.CharField(max_length=200, null=True, verbose_name='\u5907\u6ce8', blank=True)),
+            ],
+            options={
+                'ordering': ['-id'],
+                'db_table': 'tongji',
             },
         ),
         migrations.CreateModel(
@@ -89,6 +106,10 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('vlangroupname', models.CharField(unique=True, max_length=30, verbose_name='\u7f51\u6bb5\u7ec4\u540d\u79f0', db_index=True)),
+                ('ttip', models.IntegerField(default=0, verbose_name='\u7f51\u6bb5\u7ec4IP\u4e2a\u6570', blank=True)),
+                ('syip', models.IntegerField(default=0, verbose_name='\u7f51\u6bb5\u7ec4\u5269\u4f59IP\u4e2a\u6570', blank=True)),
+                ('usedip', models.IntegerField(default=0, verbose_name='\u7f51\u6bb5\u7ec4\u5df2\u7528IP\u4e2a\u6570', blank=True)),
+                ('is_selected', models.BooleanField(default=False, verbose_name='\u662f\u5426\u5df2\u7528')),
                 ('remark', models.CharField(max_length=200, null=True, verbose_name='\u5907\u6ce8', blank=True)),
                 ('vlan', models.ManyToManyField(to='ResourceManage.Vlan', verbose_name='\u7f51\u6bb5\u540d\u79f0', blank=True)),
             ],

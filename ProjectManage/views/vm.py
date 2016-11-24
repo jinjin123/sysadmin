@@ -15,6 +15,7 @@ from website.common.CommonPaginator import SelfPaginator
 from UserManage.views.permission import PermissionVerify
 from website.common.export import daochuvm
 from ProjectManage.views.getinfo import get_info
+from ProjectManage.views.getinfo import get_ping
 import json
 
 
@@ -177,9 +178,15 @@ def vmupdate(request,ID):
     """虚拟机信息更新"""
     server = Vm.objects.get(id=ID)
     data = get_info(server.ip)
+    data1 = get_ping(server.ip)
     server.vmname = data['hostname']
     server.cpu = data['cpu_count']
     server.mem = data['mem']
+    server.os = data['os']
+    server.uptime = data['uptime']
+    if data1['ping'] == u'pong':
+        server.vmstatus = True
+
     server.save()
     return HttpResponseRedirect(reverse('vmlist'))
 
