@@ -184,6 +184,11 @@ def vmupdate(request,ID):
     server.mem = data['mem']
     server.os = data['os']
     server.uptime = data['uptime']
+    server.disk = data['disktotal']
+    server.diskmount = data['diskmount']
+    server.kernel = data['os_kernel']
+    server.pycpu = data['cpu_core']
+    server.arch = data['ansible_machine']
     if data1['ping'] == u'pong':
         server.vmstatus = True
 

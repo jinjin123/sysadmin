@@ -13,13 +13,14 @@ def get_info(ip):
     os_kernel = datastructure['contacted'][ip]['ansible_facts']['ansible_kernel']
     cpu_count = datastructure['contacted'][ip]['ansible_facts']['ansible_processor_count']
     cpu_core = datastructure['contacted'][ip]['ansible_facts']['ansible_processor_cores']
-    mem = datastructure['contacted'][ip]['ansible_facts']['ansible_memtotal_mb']
+    mem = round(datastructure['contacted'][ip]['ansible_facts']['ansible_memtotal_mb']/1024.0)
     ipaddr = datastructure['contacted'][ip]['ansible_facts']['ansible_all_ipv4_addresses'][0]
 
     disktotal = sum([int(datastructure['contacted'][ip]['ansible_facts']["ansible_devices"][i]["sectors"])* \
-                    int(datastructure['contacted'][ip]['ansible_facts']["ansible_devices"][i]["sectorsize"])/1024/1024/1024 \
+                    int(datastructure['contacted'][ip]['ansible_facts']["ansible_devices"][i]["sectorsize"])/1024/1024 \
                     for i in datastructure['contacted'][ip]['ansible_facts']["ansible_devices"] if i[0:2] in ("sd","ss")])
-    diskmount = str([{"mount":i["mount"],"size":i["size_total"]/1024/1024/1024.0} for i in datastructure['contacted'][ip]['ansible_facts']["ansible_mounts"]])
+    # diskmount = str([{"mount":i["mount"],"size":i["size_total"]/1024/1024/1024.0} for i in datastructure['contacted'][ip]['ansible_facts']["ansible_mounts"]])
+    diskmount = str({i["mount"]:i["size_total"]/1024/1024/1024.0 for i in datastructure['contacted'][ip]['ansible_facts']["ansible_mounts"]})
     uptime = datastructure['contacted'][ip]['ansible_facts']['facter_uptime']
     os = datastructure['contacted'][ip]['ansible_facts']['facter_os']['lsb']['distdescription']
     
@@ -30,7 +31,7 @@ def get_info(ip):
     data['cpu_core'] = cpu_core
     data['mem'] = mem
     data['ipaddr'] = ipaddr
-    data['disktotal'] = disktotal
+    data['disktotal'] = disktotal/1024.00
     data['diskmount'] = diskmount
     data['uptime'] = uptime
     data['os'] = os

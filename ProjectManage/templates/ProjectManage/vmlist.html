@@ -49,7 +49,6 @@
             <th>名称</th>
             <th>项目</th>
             <th>服务器功能</th>
-            <th>操作系统</th>
             <th>安装软件</th>
             <th>IP地址</th>
             <th>状态</th>
@@ -62,14 +61,13 @@
                     <td>{{ i.vmname }}</td>
                     <td>{{ i.project|default:"----"}}</td>
                     <td>{{ i.role}}</td>
-                    <td>{{ i.os|default:"----"}}</td>
                     <td>{{ i.soft|default:"----"}}</td>
                     <td>{{ i.ip}}</td>
                     <td>
                         {% if i.vmstatus %}
-                            <span class="label label-success">开机</span>
+                            <span class="label label-success">UP</span>
                         {% else %}
-                            <span class="label label-default">关机</span>
+                            <span class="label label-default">Down</span>
                         {% endif %}
                     </td>
                     <td>{{ i.uptime}}</td>
@@ -79,8 +77,6 @@
                         <a class="btn btn-primary btn-xs" href={% url "vmrepl" i.id %} onclick="return confirm('是否确认复制？')">复制</a>
                         <a class="btn btn-info btn-xs" " href={% url "vmupdate" i.id  %}>刷新</a>
                         <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#myModal_{{i.id}}">详细信息</button>
-                    </td>
-                </tr>
                 <div class="modal fade" id="myModal_{{i.id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -89,9 +85,44 @@
                                 <h4 class="modal-title" id="myModalLabel">{{i.vmname}}详细信息</h4>
                             </div>
                             <div class="modal-body">
-                                   <p>cpu个数为 {{i.cpu}}</p>
-                                   <p>内存为{{i.mem}}</p>
-                                   <p>磁盘为{{i.disk}}</p>
+                                <table class="table table-hover table-striped  table-bordered table-condensed">
+                                    <tr>
+                                    <th>类型</th>
+                                    <th>值</th>
+                                    </tr>
+                                    <tr>
+                                    <td>物理cpu核数</td>
+                                    <td>{{i.pycpu}}</td>
+                                    </tr>
+                                    <tr>
+                                    <td>逻辑cpu核数</td>
+                                    <td>{{i.cpu}}</td>
+                                    </tr>
+                                    <tr>
+                                    <td>内存大小(G)</td>
+                                    <td>{{i.mem}}</td>
+                                    </tr>
+                                    <tr>
+                                    <td>磁盘大小(G)</td>
+                                    <td>{{i.disk}}</td>
+                                    </tr>
+                                    <tr>
+                                    <td>磁盘挂载信息</td>
+                                    <td>{{i.diskmount}}</td>
+                                    </tr>
+                                    <tr>
+                                    <td>操作系统</td>
+                                    <td>{{i.os|default:"----"}}</td>
+                                    </tr>
+                                    <tr>
+                                    <td>系统架构</td>
+                                    <td>{{i.arch}}</td>
+                                    </tr>
+                                    <tr>
+                                    <td>内核版本</td>
+                                    <td>{{i.kernel}}</td>
+                                    </tr>
+                                 </table>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
@@ -99,6 +130,8 @@
                         </div>
                     </div>
                 </div>
+                    </td>
+                </tr>
             {% endfor %}
 
         </table>

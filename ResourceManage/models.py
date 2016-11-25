@@ -33,9 +33,9 @@ class VlanGroup(models.Model):
 
 class StorageGroup(models.Model):
     storagegroupname = models.CharField(max_length=30,verbose_name=u'存储组名称',unique=True, db_index=True)
-    ttstorage = models.IntegerField(verbose_name=u'存储组大小',default=0,blank=True)
-    systorage = models.IntegerField(verbose_name=u'存储组剩余大小',default=0,blank=True)
-    usedstorage = models.IntegerField(verbose_name=u'存储组已用大小',default=0,blank=True)
+    ttstorage = models.DecimalField(max_digits=8, decimal_places=2, verbose_name=u'存储组大小',default=0,blank=True)
+    systorage = models.DecimalField(max_digits=8, decimal_places=2, verbose_name=u'存储组剩余大小',default=0,blank=True)
+    usedstorage = models.DecimalField(max_digits=8, decimal_places=2, verbose_name=u'存储组已用大小',default=0,blank=True)
     is_selected = models.BooleanField(default=False,verbose_name=u'是否已用')
     remark=models.CharField(max_length=200,blank=True,null=True,verbose_name=u'备注')
 
@@ -47,7 +47,7 @@ class StorageGroup(models.Model):
 
 class Storage(models.Model):
     storagename=models.CharField(max_length=100,verbose_name=u'存储名称',unique=True, db_index=True)
-    storagesize=models.IntegerField(verbose_name=u'存储大小')
+    storagesize=models.DecimalField(max_digits=8, decimal_places=2, verbose_name=u'存储大小')
     storagetype=models.CharField(max_length=30,verbose_name=u'存储类型')
     raidtype=models.CharField(max_length=30,verbose_name=u'存储RAID类型')
     storagegroup = models.ForeignKey(StorageGroup,verbose_name=u'存储组名称')
@@ -89,7 +89,7 @@ class Domain(models.Model):
 
 class Tongji(models.Model):
     tongjitype=models.CharField(max_length=50,unique=True,db_index=True,verbose_name=u'统计类型')
-    count=models.IntegerField(blank=True,null=True,verbose_name=u'统计类型')
+    count=models.DecimalField(max_digits=8, decimal_places=2,blank=True,null=True,verbose_name=u'统计类型')
     remark=models.CharField(max_length=200,blank=True,null=True,verbose_name=u'备注')
 
     def __unicode__(self):
