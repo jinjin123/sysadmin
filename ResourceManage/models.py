@@ -89,7 +89,7 @@ class Domain(models.Model):
 
 class Tongji(models.Model):
     tongjitype=models.CharField(max_length=50,unique=True,db_index=True,verbose_name=u'统计类型')
-    count=models.DecimalField(max_digits=8, decimal_places=2,blank=True,null=True,verbose_name=u'统计类型')
+    count=models.IntegerField(blank=True,null=True,verbose_name=u'数量')
     remark=models.CharField(max_length=200,blank=True,null=True,verbose_name=u'备注')
 
     def __unicode__(self):
