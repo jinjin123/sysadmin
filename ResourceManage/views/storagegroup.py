@@ -8,11 +8,11 @@ from django.shortcuts import render_to_response, RequestContext
 from django.contrib.auth.decorators import login_required
 from ResourceManage.forms import StorageGroupForm
 from ResourceManage.models import StorageGroup
-from website.common.CommonPaginator import SelfPaginator
-from UserManage.views.permission import PermissionVerify
+from website.common.CommonPaginator import selfpaginator
+from UserManage.views.permission import permissionverify
 
 
-@PermissionVerify()
+@permissionverify()
 @login_required
 def storagegroupinput(request):
     if request.method == 'POST':
@@ -29,12 +29,12 @@ def storagegroupinput(request):
     return render_to_response('ResourceManage/storagegroupForm.html', kwvars, RequestContext(request))
 
 
-@PermissionVerify()
+@permissionverify()
 @login_required
 def storagegrouplist(request):
     mlist = StorageGroup.objects.all()
     # 分页功能
-    lst = SelfPaginator(request, mlist, 20)
+    lst = selfpaginator(request, mlist, 20)
     kwvars = {
         'lPage': lst,
         'request': request,
@@ -42,17 +42,17 @@ def storagegrouplist(request):
     return render_to_response('ResourceManage/storagegrouplist.html', kwvars, RequestContext(request))
 
 
-@PermissionVerify()
+@permissionverify()
 @login_required
-def storagegroupdelete(request, ID):
-    StorageGroup.objects.filter(id=ID).delete()
+def storagegroupdelete(request, num):
+    StorageGroup.objects.filter(id=num).delete()
     return HttpResponseRedirect(reverse('storagegrouplist'))
 
 
-@PermissionVerify()
+@permissionverify()
 @login_required
-def storagegroupedit(request, ID):
-    cl = StorageGroup.objects.get(id=ID)
+def storagegroupedit(request, num):
+    cl = StorageGroup.objects.get(id=num)
     if request.method == 'POST':
         form = StorageGroupForm(request.POST, instance=cl)
         if form.is_valid():
@@ -61,7 +61,7 @@ def storagegroupedit(request, ID):
     else:
         form = StorageGroupForm(instance=cl)
     kwvars = {
-        'ID': ID,
+        'num': num,
         'form': form,
         'request': request,
     }

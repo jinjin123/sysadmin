@@ -7,11 +7,11 @@ from django.shortcuts import render_to_response, RequestContext
 from django.contrib.auth.decorators import login_required
 from ResourceManage.forms import StorageForm
 from ResourceManage.models import Storage
-from website.common.CommonPaginator import SelfPaginator
-from UserManage.views.permission import PermissionVerify
+from website.common.CommonPaginator import selfpaginator
+from UserManage.views.permission import permissionverify
 
 
-@PermissionVerify()
+@permissionverify()
 @login_required
 def storageinput(request):
     if request.method == 'POST':
@@ -28,12 +28,12 @@ def storageinput(request):
     return render_to_response('ResourceManage/storageForm.html', kwvars, RequestContext(request))
 
 
-@PermissionVerify()
+@permissionverify()
 @login_required
 def storagelist(request):
     mlist = Storage.objects.all()
     # 分页功能
-    lst = SelfPaginator(request, mlist, 20)
+    lst = selfpaginator(request, mlist, 20)
     kwvars = {
         'lPage': lst,
         'request': request,
@@ -41,26 +41,26 @@ def storagelist(request):
     return render_to_response('ResourceManage/storagelist.html', kwvars, RequestContext(request))
 
 
-@PermissionVerify()
+@permissionverify()
 @login_required
-def storagedelete(request, ID):
-    Storage.objects.filter(id=ID).delete()
+def storagedelete(request, num):
+    Storage.objects.filter(id=num).delete()
     return HttpResponseRedirect(reverse('storagelist'))
 
 
-@PermissionVerify()
+@permissionverify()
 @login_required
-def storageedit(request, ID):
-    bcstorage = Storage.objects.get(id=ID)
+def storageedit(request, num):
+    bcstorage = Storage.objects.get(id=num)
     if request.method == 'POST':
-        form = StorageForm(request.POST,instance=bcstorage)
+        form = StorageForm(request.POST, instance=bcstorage)
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(reverse('storagelist'))
     else:
         form = StorageForm(instance=bcstorage)
     kwvars = {
-        'ID': ID,
+        'num': num,
         'form': form,
         'request': request,
     }

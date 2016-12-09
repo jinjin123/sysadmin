@@ -6,11 +6,11 @@ from django.shortcuts import render_to_response, RequestContext
 from django.contrib.auth.decorators import login_required
 from ResourceManage.forms import VlanGroupForm
 from ResourceManage.models import VlanGroup
-from website.common.CommonPaginator import SelfPaginator
-from UserManage.views.permission import PermissionVerify
+from website.common.CommonPaginator import selfpaginator
+from UserManage.views.permission import permissionverify
 
 
-@PermissionVerify()
+@permissionverify()
 @login_required
 def vlangroupinput(request):
     if request.method == 'POST':
@@ -27,12 +27,12 @@ def vlangroupinput(request):
     return render_to_response('ResourceManage/vlangroupForm.html', kwvars, RequestContext(request))
 
 
-@PermissionVerify()
+@permissionverify()
 @login_required
 def vlangrouplist(request):
     mlist = VlanGroup.objects.all()
     # 分页功能
-    lst = SelfPaginator(request, mlist, 20)
+    lst = selfpaginator(request, mlist, 20)
     kwvars = {
         'lPage': lst,
         'request': request,
@@ -40,17 +40,17 @@ def vlangrouplist(request):
     return render_to_response('ResourceManage/vlangrouplist.html', kwvars, RequestContext(request))
 
 
-@PermissionVerify()
+@permissionverify()
 @login_required
-def vlangroupdelete(request, ID):
-    VlanGroup.objects.filter(id=ID).delete()
+def vlangroupdelete(request, num):
+    VlanGroup.objects.filter(id=num).delete()
     return HttpResponseRedirect(reverse('vlangrouplist'))
 
 
-@PermissionVerify()
+@permissionverify()
 @login_required
-def vlangroupedit(request, ID):
-    cl = VlanGroup.objects.get(id=ID)
+def vlangroupedit(request, num):
+    cl = VlanGroup.objects.get(id=num)
     if request.method == 'POST':
         form = VlanGroupForm(request.POST, instance=cl)
         if form.is_valid():
@@ -59,7 +59,7 @@ def vlangroupedit(request, ID):
     else:
         form = VlanGroupForm(instance=cl)
     kwvars = {
-        'ID': ID,
+        'num': num,
         'form': form,
         'request': request,
     }

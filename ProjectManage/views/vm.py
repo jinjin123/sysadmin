@@ -3,7 +3,7 @@
 # from django.shortcuts import render
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
-from django.http import HttpResponse
+# from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.shortcuts import RequestContext
 from django.contrib.auth.decorators import login_required
@@ -11,17 +11,17 @@ from ProjectManage.forms import VmForm
 from ProjectManage.models import Vm
 from ProjectManage.models import Project
 from ProjectManage.models import Pm
-from website.common.CommonPaginator import SelfPaginator
-from UserManage.views.permission import PermissionVerify
+from website.common.CommonPaginator import selfpaginator
+from UserManage.views.permission import permissionverify
 from website.common.export import daochuvm
 from ProjectManage.views.getinfo import get_info
 from ProjectManage.views.getinfo import get_ping
-import json
+# import json
 
 
-@PermissionVerify()
+@permissionverify()
 @login_required
-def vminput(request):
+def vm_input(request):
     """虚拟机录入"""
     if request.method == 'POST':
         form = VmForm(request.POST)
@@ -41,13 +41,13 @@ def vminput(request):
     return render_to_response('ProjectManage/vmForm.html', kwvars, RequestContext(request))
 
 
-@PermissionVerify()
+@permissionverify()
 @login_required
-def vmlist(request):
+def vm_list(request):
     """虚拟机展示"""
     mlist = Vm.objects.all()
     # 分页功能
-    lst = SelfPaginator(request, mlist, 20)
+    lst = selfpaginator(request, mlist, 20)
     kwvars = {
         'lPage': lst,
         'request': request,
@@ -55,19 +55,19 @@ def vmlist(request):
     return render_to_response('ProjectManage/vmlist.html', kwvars, RequestContext(request))
 
 
-@PermissionVerify()
+@permissionverify()
 @login_required
-def vmdelete(request, ID):
+def vm_delete(request, num):
     """虚拟机删除"""
-    Vm.objects.filter(id=ID).delete()
+    Vm.objects.filter(id=num).delete()
     return HttpResponseRedirect(reverse('vmlist'))
 
 
-@PermissionVerify()
+@permissionverify()
 @login_required
-def vmedit(request,ID):
+def vm_edit(request, num):
     """虚拟机编辑"""
-    pj = Vm.objects.get(id=ID)
+    pj = Vm.objects.get(id=num)
     if request.method == 'POST':
         form = VmForm(request.POST, instance=pj)
         if form.is_valid():
@@ -79,18 +79,18 @@ def vmedit(request,ID):
     else:
         form = VmForm(instance=pj)
     kwvars = {
-        'ID': ID,
+        'num': num,
         'form': form,
         'request': request,
     }
     return render_to_response('ProjectManage/vmedit.html', kwvars, RequestContext(request))
 
 
-@PermissionVerify()
+@permissionverify()
 @login_required
-def vmrepl(request,ID):
+def vm_replication(request, num):
     """虚拟机复制"""
-    pj = Vm.objects.get(id=ID)
+    pj = Vm.objects.get(id=num)
     if request.method == 'POST':
         form = VmForm(request.POST, instance=pj)
         if form.is_valid():
@@ -102,16 +102,16 @@ def vmrepl(request,ID):
     else:
         form = VmForm(instance=pj)
     kwvars = {
-        'ID': ID,
+        'num': num,
         'form': form,
         'request': request,
     }
     return render_to_response('ProjectManage/vmForm.html', kwvars, RequestContext(request))
 
 
-@PermissionVerify()
+@permissionverify()
 @login_required
-def vmquery(request):
+def vm_query(request):
     """虚拟机查询"""
     kwargs = {}
     vmname = request.GET.get('vmname')
@@ -132,7 +132,7 @@ def vmquery(request):
     print kwargs
     mlist = Vm.objects.filter(**kwargs)
     # 分页功能
-    lst = SelfPaginator(request, mlist, 20)
+    lst = selfpaginator(request, mlist, 20)
     kwvars = {
         'lPage': lst,
         'request': request,
@@ -141,8 +141,8 @@ def vmquery(request):
 
 
 @login_required
-@PermissionVerify()
-def vmexport(request):
+@permissionverify()
+def vm_export(request):
     """虚拟机信息导出"""
     kwargs = {}
     vmname = request.GET.get('vmname')
@@ -171,28 +171,27 @@ def vmexport(request):
     return daochuvm(objs, fn)
 
 
-
 @login_required
-@PermissionVerify()
-def vmupdate(request,ID):
+@permissionverify()
+def vm_update(request, num):
     """虚拟机信息更新"""
-    server = Vm.objects.get(id=ID)
+    server = Vm.objects.get(id=num)
     data = get_info(server.ip)
     data1 = get_ping(server.ip)
-    server.vmname = data['hostname']
-    server.cpu = data['cpu_count']
-    server.mem = data['mem']
-    server.os = data['os']
-    server.uptime = data['uptime']
-    server.disk = data['disktotal']
-    server.diskmount = data['diskmount']
-    server.kernel = data['os_kernel']
-    server.pycpu = data['cpu_core']
-    server.arch = data['ansible_machine']
+    vmname = data['hostname']
+    cpu = data['cpu_count']
+    mem = data['mem']
+    os = data['os']
+    uptime = data['uptime']
+    disk = data['disktotal']
+    diskmount = data['diskmount']
+    kernel = data['os_kernel']
+    pycpu = data['cpu_core']
+    arch = data['ansible_machine']
     if data1['ping'] == u'pong':
-        server.vmstatus = True
-
-    server.save()
+        vmstatus = True
+    Vm.objects.filter(id=num).update(vmname=vmname, cpu=cpu, mem=mem, os=os, uptime=uptime, disk=disk,
+                                     diskmount=diskmount, kernel=kernel, pycpu=pycpu, arch=arch, vmstatus=vmstatus)
     return HttpResponseRedirect(reverse('vmlist'))
 
 

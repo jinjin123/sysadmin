@@ -16,7 +16,7 @@
 
     <hr/>
 
-    <form class="form-horizontal" role="form" action={% url "edituserurl" ID %} method="POST" >
+    <form class="form-horizontal" role="form" action={% url "edituserurl" num %} method="POST" >
     {% csrf_token %}
 
         {% for item in form %}
@@ -34,7 +34,7 @@
         <div class="form-group">
             <div class="col-md-offset-1 col-md-10">
                 <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('确认更新吗？')">更 新</button>
-                <a class="btn btn-danger btn-sm" href={% url "resetpasswordurl" ID %} onclick="return confirm('确认重置密码吗？？')">重置密码</a>
+                <a class="btn btn-danger btn-sm" href={% url "resetpasswordurl" num %} onclick="return confirm('确认重置密码吗？？')">重置密码</a>
             <div>
         </div>
     </form>

@@ -109,7 +109,8 @@ MASK_CHOICES = (('', '---------'),
 class ProjectForm(forms.ModelForm):
     class Meta:
         model = Project
-        fields = ('env', 'shortname', 'projectname', 'createuser', 'starttime', 'endtime', 'finishtime', 'reason', 'batch', 'remark')
+        fields = ('env', 'shortname', 'projectname', 'createuser', 'starttime', 'endtime', 'finishtime', 'reason',
+                  'batch', 'remark')
         widgets = {
             'env': forms.Select(),
             'shortname': forms.TextInput(),
@@ -178,10 +179,12 @@ class ProjectQueryForm(forms.ModelForm):
         self.fields['batch'].widget.choices = BATCH_CHOICES
 '''
 
+
 class VmForm(forms.ModelForm):
     class Meta:
         model = Vm
-        fields = ('vmname', 'project', 'pm', 'role', 'cluster', 'os', 'soft', 'cpu', 'mem', 'disk', 'ip', 'mask', 'gateway', 'domain', 'admin', 'appuser')
+        fields = ('vmname', 'project', 'pm', 'role', 'cluster', 'os', 'soft', 'cpu', 'mem', 'disk', 'ip', 'vip', 'scan',
+                  'mask', 'gateway', 'domain', 'admin', 'appuser')
         widgets = {
             'vmname': forms.TextInput(),
             'project': forms.Select(),
@@ -194,6 +197,8 @@ class VmForm(forms.ModelForm):
             'mem': forms.TextInput(),
             'disk': forms.TextInput(),
             'ip': forms.TextInput(),
+            'vip': forms.TextInput(),
+            'scan': forms.TextInput(),
             'mask': forms.Select(),
             'gateway': forms.TextInput(),
             'domain': forms.Select(),
@@ -233,6 +238,12 @@ class VmForm(forms.ModelForm):
         self.fields['ip'].label = u'IP地址'
         self.fields['ip'].error_messages = {'required': u'请输入IP地址', 'invalid': u'请输入正确的IP地址'}
         self.fields['ip'].widget.attrs = {'class': 'form-control'}
+        self.fields['vip'].label = u'VIP地址'
+        self.fields['vip'].error_messages = {'required': u'请输入VIP地址', 'invalid': u'请输入正确的VIP地址'}
+        self.fields['vip'].widget.attrs = {'class': 'form-control'}
+        self.fields['scan'].label = u'SCANIP地址'
+        self.fields['scan'].error_messages = {'required': u'请输入SCANIP地址', 'invalid': u'请输入正确的SCANIP地址'}
+        self.fields['scan'].widget.attrs = {'class': 'form-control'}
         self.fields['mask'].label = u'子网掩码'
         self.fields['mask'].widget.choices = MASK_CHOICES
         self.fields['mask'].widget.attrs = {'class': 'form-control'}
@@ -274,6 +285,7 @@ class VmQueryForm(forms.ModelForm):
         self.fields['ip'].widget.attrs = {'class': 'form-control', 'placeholder': '虚拟机IP'}
 '''
 
+
 class ClusterForm(forms.ModelForm):
     class Meta:
         model = Cluster
@@ -313,7 +325,9 @@ class ClusterForm(forms.ModelForm):
 class PmForm(forms.ModelForm):
     class Meta:
         model = Pm
-        fields = ('role', 'pmname', 'sn', 'cluster', 'project', 'vlangroup', 'storagegroup', 'type', 'cpu', 'memory', 'disk', 'os', 'soft', 'eth', 'hba', 'hba_wwn', 'ip', 'ilo_ip', 'mask', 'gateway', 'domain', 'jiguihao', 'jiguiwei', 'position', 'remark')
+        fields = ('role', 'pmname', 'sn', 'cluster', 'project', 'vlangroup', 'storagegroup', 'pmtype', 'cpu',
+                  'memory', 'disk', 'os', 'soft', 'eth', 'hba', 'hba_wwn', 'ip', 'ilo_ip', 'mask', 'gateway',
+                  'domain', 'jiguihao', 'jiguiwei', 'position', 'remark')
         widgets = {
             'role': forms.Select(),
             'pmname': forms.TextInput(),
@@ -324,7 +338,7 @@ class PmForm(forms.ModelForm):
             'project': forms.Select(),
             'vlangroup': forms.Select(),
             'storagegroup': forms.Select(),
-            'type': forms.TextInput(),
+            'pmtype': forms.TextInput(),
             'cpu': forms.TextInput(),
             'memory': forms.TextInput(),
             'disk': forms.TextInput(),
@@ -360,7 +374,7 @@ class PmForm(forms.ModelForm):
         self.fields['hba'].label = u'HBA卡'
         self.fields['jiguihao'].label = u'机柜号'
         self.fields['jiguiwei'].label = u'机柜位'
-        self.fields['type'].label = u'设备类型'
+        self.fields['pmtype'].label = u'设备类型'
         self.fields['role'].label = u'功能'
         self.fields['disk'].label = u'磁盘'
         self.fields['hba_wwn'].label = u'HBAWWN'
@@ -396,8 +410,9 @@ class PmForm(forms.ModelForm):
         self.fields['hba'].widget.attrs = {'class': 'form-control', 'style': 'display:block'}
         self.fields['jiguihao'].widget.attrs = {'class': 'form-control', 'style': 'display:block'}
         self.fields['jiguiwei'].widget.attrs = {'class': 'form-control', 'style': 'display:block'}
-        self.fields['type'].widget.attrs = {'class': 'form-control', 'style': 'display:block'}
-        self.fields['role'].widget.attrs = {'class': 'form-control', 'onchange': 'javascript:listchange();return false;',  'style':'display:block'}
+        self.fields['pmtype'].widget.attrs = {'class': 'form-control', 'style': 'display:block'}
+        self.fields['role'].widget.attrs = {'class': 'form-control', 'onchange': 'javascript:listchange();'
+                                            'return false;', 'style': 'display:block'}
         self.fields['disk'].widget.attrs = {'class': 'form-control', 'style': 'display:block'}
         self.fields['hba_wwn'].widget.attrs = {'class': 'form-control', 'style': 'display:block'}
         self.fields['domain'].widget.attrs = {'class': 'form-control', 'style': 'display:block'}
@@ -415,12 +430,12 @@ class PmForm(forms.ModelForm):
 class PmQueryForm(forms.ModelForm):
     class Meta:
         model = Pm
-        fields = ('role', 'pmname', 'type', 'os', 'ip')
+        fields = ('role', 'pmname', 'pmtype', 'os', 'ip')
         widgets = {
             'role': forms.Select(),
             'pmname': forms.TextInput(),
             'ip': forms.TextInput(),
-            'type': forms.TextInput(),
+            'pmtype': forms.TextInput(),
             'os': forms.Select(),
         }
 
@@ -429,12 +444,12 @@ class PmQueryForm(forms.ModelForm):
         self.fields['pmname'].label = u'主机名'
         self.fields['os'].label = u'系统'
         self.fields['ip'].label = u'IP'
-        self.fields['type'].label = u'设备类型'
+        self.fields['pmtype'].label = u'设备类型'
         self.fields['role'].label = u'功能'
         self.fields['pmname'].widget.attrs = {'class': 'form-control', 'placeholder': '物理机名称'}
         self.fields['os'].widget.attrs = {'class': 'form-control', 'placeholder': '操作系统'}
         self.fields['ip'].widget.attrs = {'class': 'form-control', 'placeholder': 'IP地址'}
-        self.fields['type'].widget.attrs = {'class': 'form-control', 'placeholder': '物理机类型'}
+        self.fields['pmtype'].widget.attrs = {'class': 'form-control', 'placeholder': '物理机类型'}
         self.fields['role'].widget.attrs = {'class': 'form-control', 'placeholder': '服务器功能'}
         self.fields['os'].widget.choices = OS_CHOICES
         self.fields['role'].widget.choices = ROLE_CHOICES

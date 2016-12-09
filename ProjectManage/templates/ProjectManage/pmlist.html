@@ -30,8 +30,8 @@
             <input type="text" class="form-control" id="ip"  name="ip" placeholder="ip地址">
        </div>
         <div class="form-group">
-            <label class="sr-only" for="type">管理地址</label>
-            <input type="text" class="form-control" id="type"  name="type" placeholder="设备类型">
+            <label class="sr-only" for="pmtype">管理地址</label>
+            <input type="text" class="form-control" id="pmtype"  name="pmtype" placeholder="设备类型">
        </div>
         <div class="form-group">
             <label class="sr-only" for="cluster">物理机角色</label>
@@ -66,7 +66,7 @@
                     <td>{{ i.position}}</td>
                     <td>{{ i.jiguiwei}}</td>
                     <td>{{ i.jiguihao}}</td>
-                    <td>{{ i.type}}</td>
+                    <td>{{ i.pmtype}}</td>
                     <td>{{ i.os}}</td>
                     <td>{{ i.cluster|default:"----"}}</td>
                     <td class="host_buttom">

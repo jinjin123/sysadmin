@@ -1,19 +1,19 @@
 #!/usr/bin/env python
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse,HttpResponseRedirect
-from django.shortcuts import render_to_response,RequestContext
+from django.http import HttpResponseRedirect
+from django.shortcuts import render_to_response, RequestContext
 from django.contrib.auth.decorators import login_required
-from website.common.CommonPaginator import SelfPaginator
-from UserManage.views.permission import PermissionVerify
-
+from website.common.CommonPaginator import selfpaginator
+from UserManage.views.permission import permissionverify
 from UserManage.forms import RoleListForm
 from UserManage.models import RoleList
 
+
 @login_required
-@PermissionVerify()
-def AddRole(request):
+@permissionverify()
+def addrole(request):
     if request.method == "POST":
         form = RoleListForm(request.POST)
         if form.is_valid():
@@ -21,53 +21,47 @@ def AddRole(request):
             return HttpResponseRedirect(reverse('listroleurl'))
     else:
         form = RoleListForm()
-
     kwvars = {
-        'form':form,
-        'request':request,
+        'form': form,
+        'request': request,
     }
+    return render_to_response('UserManage/role.add.html', kwvars, RequestContext(request))
 
-    return render_to_response('UserManage/role.add.html',kwvars,RequestContext(request))
 
 @login_required
-@PermissionVerify()
-def ListRole(request):
-    mList = RoleList.objects.all()
-
-    #分页功能
-    lst = SelfPaginator(request,mList, 20)
-
+@permissionverify()
+def listrole(request):
+    mlist = RoleList.objects.all()
+    # 分页功能
+    lst = selfpaginator(request, mlist, 20)
     kwvars = {
-        'lPage':lst,
-        'request':request,
+        'lPage': lst,
+        'request': request,
     }
+    return render_to_response('UserManage/role.list.html', kwvars, RequestContext(request))
 
-    return render_to_response('UserManage/role.list.html',kwvars,RequestContext(request))
 
 @login_required
-@PermissionVerify()
-def EditRole(request,ID):
-    iRole = RoleList.objects.get(id=ID)
-
+@permissionverify()
+def editrole(request, num):
+    irole = RoleList.objects.get(id=num)
     if request.method == "POST":
-        form = RoleListForm(request.POST,instance=iRole)
+        form = RoleListForm(request.POST, instance=irole)
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(reverse('listroleurl'))
     else:
-        form = RoleListForm(instance=iRole)
-
+        form = RoleListForm(instance=irole)
     kwvars = {
-        'ID':ID,
-        'form':form,
-        'request':request,
+        'num': num,
+        'form': form,
+        'request': request,
     }
+    return render_to_response('UserManage/role.edit.html', kwvars, RequestContext(request))
 
-    return render_to_response('UserManage/role.edit.html',kwvars,RequestContext(request))
 
 @login_required
-@PermissionVerify()
-def DeleteRole(request,ID):
-    RoleList.objects.filter(id = ID).delete()
-
+@permissionverify()
+def deleterole(request,num):
+    RoleList.objects.filter(id=num).delete()
     return HttpResponseRedirect(reverse('listroleurl'))

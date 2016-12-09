@@ -58,7 +58,7 @@ pan>集群录入</a>
 
     <hr/>
 
-<form class="form-horizontal" role="form" action={% url "clusteredit" ID %} method="POST" >
+<form class="form-horizontal" role="form" action={% url "clusteredit" num %} method="POST" >
     {% csrf_token %}
 
         {% for item in form %}

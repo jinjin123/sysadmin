@@ -8,11 +8,11 @@ from django.shortcuts import render_to_response, RequestContext
 from django.contrib.auth.decorators import login_required
 from ResourceManage.forms import SoftwareForm
 from ResourceManage.models import Software
-from website.common.CommonPaginator import SelfPaginator
-from UserManage.views.permission import PermissionVerify
+from website.common.CommonPaginator import selfpaginator
+from UserManage.views.permission import permissionverify
 
 
-@PermissionVerify()
+@permissionverify()
 @login_required
 def softwareinput(request):
     if request.method == 'POST':
@@ -29,12 +29,12 @@ def softwareinput(request):
     return render_to_response('ResourceManage/softwareForm.html', kwvars, RequestContext(request))
 
 
-@PermissionVerify()
+@permissionverify()
 @login_required
 def softwarelist(request):
     mlist = Software.objects.all()
     # 分页功能
-    lst = SelfPaginator(request, mlist, 20)
+    lst = selfpaginator(request, mlist, 20)
     kwvars = {
         'lPage': lst,
         'request': request,
@@ -42,17 +42,17 @@ def softwarelist(request):
     return render_to_response('ResourceManage/softwarelist.html', kwvars, RequestContext(request))
 
 
-@PermissionVerify()
+@permissionverify()
 @login_required
-def softwaredelete(request, ID):
-    Software.objects.filter(id=ID).delete()
+def softwaredelete(request, num):
+    Software.objects.filter(id=num).delete()
     return HttpResponseRedirect(reverse('softwarelist'))
 
 
-@PermissionVerify()
+@permissionverify()
 @login_required
-def softwareedit(request, ID):
-    soft = Software.objects.get(id=ID)
+def softwareedit(request, num):
+    soft = Software.objects.get(id=num)
     if request.method == 'POST':
         form = SoftwareForm(request.POST, instance=soft)
         if form.is_valid():
@@ -61,14 +61,14 @@ def softwareedit(request, ID):
     else:
         form = SoftwareForm(instance=soft)
     kwvars = {
-        'ID': ID,
+        'num': num,
         'form': form,
         'request': request,
     }
     return render_to_response('ResourceManage/softwareedit.html', kwvars, RequestContext(request))
 
 
-@PermissionVerify()
+@permissionverify()
 @login_required
 def softwarequery(request):
     kwargs = {}
@@ -76,7 +76,7 @@ def softwarequery(request):
     version = request.GET.get('version')
     platform = request.GET.get('platform')
     arch = request.GET.get('arch')
-    type = request.GET.get('type')
+    softtype = request.GET.get('softtype')
     if softwarename != '':
         kwargs['softwarename__contains'] = softwarename 
     if version != '':
@@ -85,11 +85,11 @@ def softwarequery(request):
         kwargs['platform__contains'] = platform 
     if arch != '':
         kwargs['arch__contains'] = arch
-    if type != '':
-        kwargs['type__contains'] = type 
+    if softtype != '':
+        kwargs['softtype__contains'] = softtype
     mlist = Software.objects.filter(**kwargs)
     # 分页功能
-    lst = SelfPaginator(request, mlist, 20)
+    lst = selfpaginator(request, mlist, 20)
     kwvars = {
         'lPage': lst,
         'request': request,

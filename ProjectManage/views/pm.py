@@ -7,14 +7,14 @@ from django.contrib.auth.decorators import login_required
 from ProjectManage.forms import PmForm
 from ProjectManage.models import Pm, Cluster
 from ResourceManage.models import StorageGroup, VlanGroup
-from website.common.CommonPaginator import SelfPaginator
-from UserManage.views.permission import PermissionVerify
+from website.common.CommonPaginator import selfpaginator
+from UserManage.views.permission import permissionverify
 from website.common.export import daochupm
 
 
-@PermissionVerify()
+@permissionverify()
 @login_required
-def pminput(request):
+def pm_input(request):
     """物理机录入"""
     if request.method == 'POST':
         form = PmForm(request.POST)
@@ -48,13 +48,13 @@ def pminput(request):
     return render_to_response('ProjectManage/pmForm.html', kwvars, RequestContext(request))
 
 
-@PermissionVerify()
+@permissionverify()
 @login_required
-def pmlist(request):
+def pm_list(request):
     """物理机展示"""
     mlist = Pm.objects.all()
     # 分页功能
-    lst = SelfPaginator(request, mlist, 20)
+    lst = selfpaginator(request, mlist, 20)
     kwvars = {
         'lPage': lst,
         'request': request,
@@ -62,11 +62,11 @@ def pmlist(request):
     return render_to_response('ProjectManage/pmlist.html', kwvars, RequestContext(request))
 
 
-@PermissionVerify()
+@permissionverify()
 @login_required
-def pmdelete(request,ID):
+def pm_delete(request, num):
     """物理机删除"""
-    pm = Pm.objects.get(id=ID)
+    pm = Pm.objects.get(id=num)
     if pm.storagegroup_id != '':
         print pm.storagegroup_id
         StorageGroup.objects.filter(id=pm.storagegroup_id).update(is_selected=0)
@@ -76,11 +76,11 @@ def pmdelete(request,ID):
     return HttpResponseRedirect(reverse('pmlist'))
 
 
-@PermissionVerify()
+@permissionverify()
 @login_required
-def pmedit(request, ID):
+def pm_edit(request, num):
     """物理机编辑"""
-    bcpm = Pm.objects.get(id=ID)
+    bcpm = Pm.objects.get(id=num)
     if bcpm.storagegroup_id != '':
         StorageGroup.objects.filter(id=bcpm.storagegroup_id).update(is_selected=0)
     if bcpm.vlangroup_id != '':
@@ -109,18 +109,18 @@ def pmedit(request, ID):
         form.fields['vlangroup'].queryset = VlanGroup.objects.filter(is_selected=0)
         form.fields['storagegroup'].queryset = StorageGroup.objects.filter(is_selected=0)
     kwvars = {
-        'ID': ID,
+        'num': num,
         'form': form,
         'request': request,
     }
     return render_to_response('ProjectManage/pmedit.html', kwvars, RequestContext(request))
 
 
-@PermissionVerify()
+@permissionverify()
 @login_required
-def pmrepl(request, ID):
+def pm_replication(request, num):
     """物理机复制"""
-    bcpm = Pm.objects.get(id=ID)
+    bcpm = Pm.objects.get(id=num)
     if bcpm.storagegroup_id != '':
         StorageGroup.objects.filter(id=bcpm.storagegroup_id).update(is_selected=0)
     if bcpm.vlangroup_id != '':
@@ -137,7 +137,7 @@ def pmrepl(request, ID):
                     StorageGroup.objects.filter(id=pm.storagegroup_id).update(is_selected=1)
                 if pm.vlangroup_id != '':
                     VlanGroup.objects.filter(id=pm.vlangroup_id).update(is_selected=1)
-            else :
+            else:
                 storagegroup_id = Cluster.objects.get(id=pm.cluster_id).storagegroup_id
                 vlangroup_id = Cluster.objects.get(id=pm.cluster_id).vlangroup_id
                 StorageGroup.objects.filter(id=storagegroup_id).update(is_selected=1)
@@ -149,21 +149,21 @@ def pmrepl(request, ID):
         form.fields['vlangroup'].queryset = VlanGroup.objects.filter(is_selected=0)
         form.fields['storagegroup'].queryset = StorageGroup.objects.filter(is_selected=0)
     kwvars = {
-        'ID': ID,
+        'num': num,
         'form': form,
         'request': request,
     }
     return render_to_response('ProjectManage/pmrepl.html', kwvars, RequestContext(request))
 
 
-@PermissionVerify()
+@permissionverify()
 @login_required
-def pmquery(request):
+def pm_query(request):
     """物理机信息查询"""
     kwargs = {}
     pmname = request.GET.get('pmname')
     ip = request.GET.get('ip')
-    type = request.GET.get('type')
+    pmtype = request.GET.get('pmtype')
     role = request.GET.get('role')
     os = request.GET.get('os')
     if pmname != '':
@@ -172,13 +172,13 @@ def pmquery(request):
         kwargs['ip__contains'] = ip
     if role != '':
         kwargs['role__icontains'] = role
-    if type != '':
-            kwargs['type__icontains'] = type
+    if pmtype != '':
+            kwargs['pmtype__icontains'] = pmtype
     if os != '':
         kwargs['os__icontains'] = os
     mlist = Pm.objects.filter(**kwargs)
     # 分页功能
-    lst = SelfPaginator(request, mlist, 20)
+    lst = selfpaginator(request, mlist, 20)
     kwvars = {
         'lPage': lst,
         'request': request,
@@ -187,13 +187,13 @@ def pmquery(request):
 
 
 @login_required
-@PermissionVerify()
-def pmexport(request):
+@permissionverify()
+def pm_export(request):
     """物理机信息导出"""
     kwargs = {}
     pmname = request.GET.get('pmname')
     ip = request.GET.get('ip')
-    type = request.GET.get('type')
+    pmtype = request.GET.get('pmtype')
     role = request.GET.get('role')
     os = request.GET.get('os')
     if pmname != '':
@@ -202,8 +202,8 @@ def pmexport(request):
         kwargs['ip__contains'] = ip
     if role != '':
         kwargs['role__icontains'] = role
-    if type != '':
-            kwargs['type__icontains'] = type
+    if pmtype != '':
+            kwargs['pmtype__icontains'] = pmtype
     if os != '':
         kwargs['os__icontains'] = os
     fnstr = u'pm'

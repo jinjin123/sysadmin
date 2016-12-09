@@ -186,19 +186,24 @@ pan>虚拟机录入</a>
                     {{form.ip.errors}}
                 </div>
             </div>
-            <div id="vip_div" class="form-group" style="display:none">
-                <label id="vip_label" class="col-md-1 control-label ">VIP地址</label>
-                <div class="col-md-4">
-                   <input type="text" class="form-control" id="vip",name="vip">
+            <div class="form-group" id="vip_div" style="display:none">
+                <label  class="col-md-1 control-label ">VIP地址</label>
+                <div class="col-md-4" id="vip">
+                    {{form.vip}}
+                </div>
+                <div class="col-md-offset-1 col-md-11">
+                    {{form.vip.errors}}
                 </div>
             </div>
             <div class="form-group" id="scanip_div" style="display:none">
-                <label  id="scanip_label" class="col-md-1 control-label ">SCANIP地址</label>
-                <div class="col-md-4">
-                   <input type="text" class="form-control" id="scanip",name="scanip">    
+                <label  class="col-md-1 control-label ">SCANIP地址</label>
+                <div class="col-md-4" id="scanip">
+                    {{form.scan}}
+                </div>
+                <div class="col-md-offset-1 col-md-11">
+                    {{form.scan.errors}}
                 </div>
             </div>
-
             <div class="form-group">
                 <label  class="col-md-1 control-label ">子网掩码</label>
                 <div class="col-md-4">
@@ -259,13 +264,13 @@ pan>虚拟机录入</a>
                 type: "GET",  
                 url: "/project/vm/getip/",  
                 dateType: "json",  
-                data:{'ipcount':$("#ipcount").val(),'ID':$("#id_cluster").val(),'PID':$("#id_pm").val()},  
+                data:{'ipcount':$("#ipcount").val(),'num':$("#id_cluster").val(),'pnum':$("#id_pm").val()},  
                 success: function(returnedData){  
                     $("#id_ip").val(returnedData['ip']);  
                     $("#id_gateway").val(returnedData['gateway']);  
                     $("#id_mask").val(returnedData['mask']);  
-                    $("#vip").val(returnedData['vip']);  
-                    $("#scanip").val(returnedData['scanip']);  
+                    $("#id_vip").val(returnedData['vip']);
+                    $("#id_scan").val(returnedData['scanip']);
                 }  
                   
             });  

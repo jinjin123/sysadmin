@@ -9,14 +9,14 @@ from django.shortcuts import render_to_response, RequestContext
 from django.contrib.auth.decorators import login_required
 from ProjectManage.forms import ProjectForm
 from ProjectManage.models import Project
-from website.common.CommonPaginator import SelfPaginator
-from UserManage.views.permission import PermissionVerify
+from website.common.CommonPaginator import selfpaginator
+from UserManage.views.permission import permissionverify
 from website.common.export import daochuproject
 
 
-@PermissionVerify()
+@permissionverify()
 @login_required
-def projectinput(request):
+def project_input(request):
     """项目录入"""
     if request.method == 'POST':
         form = ProjectForm(request.POST)
@@ -32,13 +32,13 @@ def projectinput(request):
     return render_to_response('ProjectManage/projectForm.html', kwvars, RequestContext(request))
 
 
-@PermissionVerify()
+@permissionverify()
 @login_required
-def projectlist(request):
+def project_list(request):
     """项目展示"""
     mlist = Project.objects.all()
     # 分页功能
-    lst = SelfPaginator(request, mlist, 20)
+    lst = selfpaginator(request, mlist, 20)
     kwvars = {
         'lPage': lst,
         'request': request,
@@ -46,19 +46,19 @@ def projectlist(request):
     return render_to_response('ProjectManage/projectlist.html', kwvars, RequestContext(request))
 
 
-@PermissionVerify()
+@permissionverify()
 @login_required
-def projectdelete(request, ID):
+def project_delete(request, num):
     """项目删除"""
-    Project.objects.filter(id=ID).delete()
+    Project.objects.filter(id=num).delete()
     return HttpResponseRedirect(reverse('projectlist'))
 
 
-@PermissionVerify()
+@permissionverify()
 @login_required
-def projectedit(request, ID):
+def project_edit(request, num):
     """项目编辑"""
-    pj = Project.objects.get(id=ID)
+    pj = Project.objects.get(id=num)
     if request.method == 'POST':
         form = ProjectForm(request.POST, instance=pj)
         if form.is_valid():
@@ -67,21 +67,21 @@ def projectedit(request, ID):
     else:
         form = ProjectForm(instance=pj)
     kwvars = {
-        'ID': ID,
+        'num': num,
         'form': form,
         'request': request,
     }
     return render_to_response('ProjectManage/projectedit.html', kwvars, RequestContext(request))
 
 
-@PermissionVerify()
+@permissionverify()
 @login_required
-def projectshowvm(request, ID):
-    """通过项目ID查询所属虚拟机"""
-    pj = Project.objects.get(id=ID)
+def project_show_vm(request, num):
+    """通过项目num查询所属虚拟机"""
+    pj = Project.objects.get(id=num)
     mlist = pj.vm_set.all()
     # 分页功能
-    lst = SelfPaginator(request, mlist, 20)
+    lst = selfpaginator(request, mlist, 20)
     kwvars = {
         'lPage': lst,
         'request': request,
@@ -89,9 +89,9 @@ def projectshowvm(request, ID):
     return render_to_response('ProjectManage/vmlist.html', kwvars, RequestContext(request))
 
 
-@PermissionVerify()
+@permissionverify()
 @login_required
-def projectquery(request):
+def project_query(request):
     """项目查询"""
     kwargs = {}
     env = request.GET.get('env')
@@ -111,16 +111,17 @@ def projectquery(request):
             kwargs['createuser__nickname__icontains'] = createuser
     mlist = Project.objects.filter(**kwargs)
     # 分页功能
-    lst = SelfPaginator(request, mlist, 20)
+    lst = selfpaginator(request, mlist, 20)
     kwvars = {
         'lPage': lst,
         'request': request,
     }
     return render_to_response('ProjectManage/projectlist.html', kwvars, RequestContext(request))
 
+
 @login_required
-@PermissionVerify()
-def projectexport(request):
+@permissionverify()
+def project_export(request):
     """项目信息导出"""
     kwargs = {}
     env = request.GET.get('env')

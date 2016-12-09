@@ -16,7 +16,7 @@
 
     <hr/>
 
-    <form class="form-horizontal" role="form" action={% url "editpermissionurl" ID %} method="POST" >
+    <form class="form-horizontal" role="form" action={% url "editpermissionurl" num %} method="POST" >
     {% csrf_token %}
 
         {% for item in form %}

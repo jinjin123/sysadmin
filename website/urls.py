@@ -14,21 +14,17 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
 from django.conf.urls import include, url,patterns
-from django.contrib import admin
+# from django.contrib import admin
 from django.conf import settings
-from website.views import Home
+from website.views import home
 
 urlpatterns = patterns('',
-    # Examples:
-
-    #url(r'^admin/', include(admin.site.urls)),
-    url(r'^$',Home,name='home'),
-    url(r'^accounts/',include('UserManage.urls' )),
-    url(r'^install/',include('AutoInst.urls' )),
-    url(r'^project/',include('ProjectManage.urls' )),
-    url(r'^resource/',include('ResourceManage.urls' )),
-
-    #static
-    url(r'^static/(?P<path>.*)$', 'django.views.static.serve', { 'document_root': settings.STATIC_ROOT,}),
+    url(r'^$', home, name='home'),
+    url(r'^accounts/', include('UserManage.urls')),
+    url(r'^install/', include('AutoInst.urls')),
+    url(r'^project/', include('ProjectManage.urls')),
+    url(r'^resource/', include('ResourceManage.urls')),
+    # static
+    url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT}),
 )
 

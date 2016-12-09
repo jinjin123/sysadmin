@@ -32,8 +32,10 @@ class Cluster(models.Model):
     vlangroup = models.ForeignKey(VlanGroup, null=True, verbose_name=u'集群网络组', on_delete=models.SET_NULL)
     storagegroup = models.ForeignKey(StorageGroup, null=True, verbose_name=u'集群存储组', on_delete=models.SET_NULL)
     ttstorage = models.DecimalField(max_digits=8, decimal_places=2, default=0, blank=True, verbose_name=u'集群存储')
-    usedstorage = models.DecimalField(max_digits=8, decimal_places=2, default=0, blank=True, verbose_name=u'集群已用存储')
-    systorage = models.DecimalField(max_digits=8, decimal_places=2, default=0, blank=True, verbose_name=u'集群剩余存储')
+    usedstorage = models.DecimalField(max_digits=8, decimal_places=2, default=0, blank=True,
+                                      verbose_name=u'集群已用存储')
+    systorage = models.DecimalField(max_digits=8, decimal_places=2, default=0, blank=True,
+                                    verbose_name=u'集群剩余存储')
     ttcore = models.IntegerField(default=0, blank=True, verbose_name=u'集群CPU核数')
     usedcore = models.IntegerField(default=0, blank=True, verbose_name=u'集群已用CPU核数')
     sycore = models.IntegerField(default=0, blank=True, verbose_name=u'集群剩余CPU核数')
@@ -53,12 +55,16 @@ class Cluster(models.Model):
 class Pm(models.Model):
     pmname = models.CharField(max_length=30, unique=True, db_index=True, verbose_name=u'物理机名称')
     sn = models.CharField(max_length=30, blank=True, null=True, verbose_name=u'物理机序列号')
-    cluster = models.ForeignKey(Cluster, blank=True, null=True, verbose_name=u'物理机所属集群', on_delete=models.SET_NULL)
-    project = models.ForeignKey(Project, blank=True, null=True, verbose_name=u'物理机所属项目', on_delete=models.SET_NULL)
-    vlangroup = models.ForeignKey(VlanGroup, blank=True, null=True, verbose_name=u'物理机所属网络组', on_delete=models.SET_NULL)
-    storagegroup = models.ForeignKey(StorageGroup, blank=True, null=True, verbose_name=u'物理机所属存储组', on_delete=models.SET_NULL)
+    cluster = models.ForeignKey(Cluster, blank=True, null=True, verbose_name=u'物理机所属集群',
+                                on_delete=models.SET_NULL)
+    project = models.ForeignKey(Project, blank=True, null=True, verbose_name=u'物理机所属项目',
+                                on_delete=models.SET_NULL)
+    vlangroup = models.ForeignKey(VlanGroup, blank=True, null=True, verbose_name=u'物理机所属网络组',
+                                  on_delete=models.SET_NULL)
+    storagegroup = models.ForeignKey(StorageGroup, blank=True, null=True, verbose_name=u'物理机所属存储组',
+                                     on_delete=models.SET_NULL)
     role = models.CharField(max_length=30, blank=True, null=True, verbose_name=u'物理机角色')
-    type = models.CharField(max_length=30, blank=True, null=True, verbose_name=u'物理机类型')
+    pmtype = models.CharField(max_length=30, blank=True, null=True, verbose_name=u'物理机类型')
     cpu = models.IntegerField(blank=True, null=True, verbose_name=u'物理机CPU核数')
     memory = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True, verbose_name=u'物理机内存大小')
     disk = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True, verbose_name=u'物理机磁盘大小')
@@ -75,8 +81,10 @@ class Pm(models.Model):
     jiguiwei = models.CharField(max_length=30, blank=True, null=True, verbose_name=u'物理机机柜位')
     hba_wwn = models.CharField(max_length=30, blank=True, null=True, verbose_name=u'物理机HBA卡WWN')
     position = models.CharField(max_length=30, blank=True, null=True, verbose_name=u'物理机位置')
-    ttstorage = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True, verbose_name=u'物理机存储大小')
-    systorage = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True, verbose_name=u'剩余存储大小')
+    ttstorage = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True,
+                                    verbose_name=u'物理机存储大小')
+    systorage = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True,
+                                    verbose_name=u'剩余存储大小')
     sycore = models.IntegerField(blank=True, null=True, verbose_name=u'物理机剩余CPU核数')
     symem = models.IntegerField(blank=True, null=True, verbose_name=u'物理机剩余CPU核数')
     remark = models.CharField(max_length=30, blank=True, null=True, verbose_name=u'备注')
@@ -103,6 +111,8 @@ class Vm(models.Model):
     mem = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True, verbose_name=u'虚拟机内存大小')
     disk = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True, verbose_name=u'虚拟机磁盘大小')
     ip = models.GenericIPAddressField(verbose_name=u'虚拟机地址')
+    vip = models.GenericIPAddressField(verbose_name=u'虚拟机VIP地址', blank=True, null=True)
+    scan = models.GenericIPAddressField(verbose_name=u'虚拟机SCAN地址', blank=True, null=True)
     mask = models.GenericIPAddressField(blank=True, null=True, verbose_name=u'虚拟机子网掩码')
     gateway = models.GenericIPAddressField(blank=True, null=True, verbose_name=u'虚拟机网关')
     domain = models.ForeignKey(Domain, blank=True, null=True, verbose_name=u'虚拟机所属域', on_delete=models.SET_NULL)

@@ -4,23 +4,23 @@
 from ResourceManage.models import Vlan, VlanGroup
 from ProjectManage.models import Vm, Cluster, Pm
 from django.contrib.auth.decorators import login_required
-from UserManage.views.permission import PermissionVerify
+from UserManage.views.permission import permissionverify
 from django.http import JsonResponse
+from IPy import IP
 # import json
 
 
 def sort_ip_list(ip_list):
-    from IPy import IP
     tmpip = [(IP(ip).int(), ip) for ip in ip_list]
     tmpip.sort()
     return [ip[1] for ip in tmpip]
 
 
 @login_required
-@PermissionVerify()
-def getip(request):
-        ID = request.GET['ID']
-        PID = request.GET['PID']
+@permissionverify()
+def get_ip(request):
+        num = request.GET['num']
+        pnum = request.GET['pnum']
         ipcount = int(request.GET['ipcount'])
 
         # 定义网段类型中所有ip地址列表
@@ -30,10 +30,10 @@ def getip(request):
         # 定义网段类型中可用ip地址列表
         # list3 = []
    
-        if ID != '':
-            vlangroup_id = Cluster.objects.get(id=int(ID)).vlangroup_id
-        if PID != '':
-            vlangroup_id = Pm.objects.get(id=int(PID)).vlangroup_id
+        if num != '':
+            vlangroup_id = Cluster.objects.get(id=int(num)).vlangroup_id
+        if pnum != '':
+            vlangroup_id = Pm.objects.get(id=int(pnum)).vlangroup_id
         vlangroupobject = VlanGroup.objects.get(id=vlangroup_id)
         vlanqueryset = vlangroupobject.vlan.all()
         for obj in vlanqueryset:
@@ -42,12 +42,23 @@ def getip(request):
             thestartip = obj.startip
             theendip = obj.endip
             for j in range(thestartip, theendip+1):
-                ip = suffix_ip + '.'+ str(j)
+                ip = suffix_ip + '.' + str(j)
                 list1.append(ip)
         ips = Vm.objects.values("ip")
-        for i in ips:
-            ip1 = i['ip']
-            list2.append(ip1)
+        vips = Vm.objects.values("vip")
+        scan = Vm.objects.values("scan")
+        if ip != '':
+            for i in ips:
+                ip1 = i['ip']
+                list2.append(ip1)
+        if vips != '':
+            for i in vips:
+                vip1 = i['vip']
+                list2.append(vip1)
+        if scan != '':
+            for i in scan:
+                scan1 = i['scan']
+                list2.append(scan1)
         set1 = set(list1)
         set2 = set(list2)
         set3 = set1-set2
